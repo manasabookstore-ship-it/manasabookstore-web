@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manasa Logo Preview</title>
+    <style>
+      :root {
+        color: #071f33;
+        background: #fbf7ef;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+
+      main {
+        width: min(1040px, calc(100vw - 40px));
+        display: grid;
+        gap: 28px;
+      }
+
+      .preview {
+        border: 1px solid rgb(7 31 51 / 12%);
+        background: white;
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 24px 70px rgb(7 31 51 / 12%);
+      }
+
+      .lockup {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 28px;
+        align-items: center;
+      }
+
+      .mark {
+        width: 220px;
+        height: 220px;
+        display: block;
+      }
+
+      .sample {
+        border-radius: 18px;
+        background: #071f33;
+        color: white;
+        padding: 28px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 34px;
+        line-height: 1;
+      }
+
+      p {
+        margin: 12px 0 0;
+        max-width: 520px;
+        line-height: 1.6;
+        color: rgb(255 255 255 / 76%);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="preview">
+        <img
+          class="lockup"
+          src="/manasa-logo-concept.svg"
+          alt="Manasa Book Store horizontal logo concept"
+        />
+      </section>
+      <section class="preview row">
+        <img
+          class="mark"
+          src="/manasa-logo-concept-mark.svg"
+          alt="Manasa Book Store app mark concept"
+        />
+        <div class="sample">
+          <h1>Mobile app mark</h1>
+          <p>
+            Square logo version for app icon, splash screen, profile image, and
+            compact header use.
+          </p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
