@@ -5,6 +5,7 @@ export type AppRole = "customer" | "staff" | "admin" | "owner";
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
 const adminRoles: AppRole[] = ["staff", "admin", "owner"];
+const staffManagerRoles: AppRole[] = ["admin", "owner"];
 
 export async function getCurrentProfile() {
   const supabase = await createSupabaseServerClient();
@@ -37,4 +38,8 @@ export async function getCurrentRole(): Promise<AppRole | null> {
 
 export function canAccessAdmin(role: AppRole | null) {
   return role ? adminRoles.includes(role) : false;
+}
+
+export function canManageStaff(role: AppRole | null) {
+  return role ? staffManagerRoles.includes(role) : false;
 }

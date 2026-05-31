@@ -1,9 +1,10 @@
 "use client";
 
-import { CheckCircle2, Plus, ReceiptText, Trash2 } from "lucide-react";
+import { CheckCircle2, Plus, ReceiptText, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { AdminSale, SaleItem } from "@/lib/admin-data";
+import { BarcodeScannerButton } from "./BarcodeScannerButton";
 import { AdminPageHeader } from "./AdminPageHeader";
 import { useAdminStore } from "./AdminStore";
 
@@ -18,6 +19,7 @@ export function SalesEntry() {
   const [paymentMode, setPaymentMode] =
     useState<AdminSale["paymentMode"]>("Cash");
   const [cart, setCart] = useState<SaleItem[]>([]);
+  const [barcode, setBarcode] = useState("");
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -34,31 +36,32 @@ export function SalesEntry() {
     [products],
   );
 
-  function addToCart() {
+  function addProductToCart(productId: string, nextQuantity: number) {
     setMessage("");
-    if (!selectedProduct) {
+    const product = products.find((item) => item.id === productId);
+
+    if (!product) {
       return;
     }
 
-    const nextQuantity = Number(quantity);
     if (Number.isNaN(nextQuantity) || nextQuantity <= 0) {
       setMessage("Enter a valid quantity.");
       return;
     }
 
-    if (nextQuantity > selectedProduct.stock) {
+    if (nextQuantity > product.stock) {
       setMessage("Quantity is higher than available stock.");
       return;
     }
 
     setCart((current) => {
       const existing = current.find(
-        (item) => item.productId === selectedProduct.id,
+        (item) => item.productId === product.id,
       );
 
       if (existing) {
         return current.map((item) =>
-          item.productId === selectedProduct.id
+          item.productId === product.id
             ? { ...item, quantity: item.quantity + nextQuantity }
             : item,
         );
@@ -67,15 +70,44 @@ export function SalesEntry() {
       return [
         ...current,
         {
-          productId: selectedProduct.id,
-          name: selectedProduct.name,
-          sku: selectedProduct.sku,
+          productId: product.id,
+          name: product.name,
+          sku: product.sku,
           quantity: nextQuantity,
-          price: selectedProduct.price,
+          price: product.price,
         },
       ];
     });
     setQuantity("1");
+  }
+
+  function addToCart() {
+    if (!selectedProduct) {
+      return;
+    }
+
+    addProductToCart(selectedProduct.id, Number(quantity));
+  }
+
+  function addByBarcode(code = barcode) {
+    const scanned = code.trim();
+
+    if (!scanned) {
+      setMessage("Enter or scan a barcode first.");
+      return;
+    }
+
+    const product = products.find((item) => item.barcode === scanned);
+
+    if (!product) {
+      setMessage("Barcode not found in inventory. Add the product first.");
+      return;
+    }
+
+    setSelectedProductId(product.id);
+    addProductToCart(product.id, 1);
+    setBarcode("");
+    setMessage(`${product.name} added to sale.`);
   }
 
   function removeItem(productId: string) {
@@ -107,6 +139,37 @@ export function SalesEntry() {
       <div className="mt-8 grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
         <section className="rounded-[8px] border border-[#071f33]/10 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-black">Add item</h2>
+          <label className="mt-5 block text-sm font-black">
+            Scan barcode
+            <div className="mt-2 flex gap-2">
+              <input
+                value={barcode}
+                onChange={(event) => setBarcode(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    addByBarcode();
+                  }
+                }}
+                placeholder="Scan or type barcode"
+                className="h-12 min-w-0 flex-1 rounded-[8px] border border-[#071f33]/12 px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
+              />
+              <button
+                type="button"
+                onClick={() => addByBarcode()}
+                className="inline-flex h-12 items-center justify-center rounded-[8px] bg-[#f7faf9] px-4 text-sm font-black text-[#071f33]"
+                aria-label="Find barcode"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+              <BarcodeScannerButton
+                onDetected={(code) => {
+                  setBarcode(code);
+                  addByBarcode(code);
+                }}
+              />
+            </div>
+          </label>
           <label className="mt-5 block text-sm font-black">
             Product
             <select
