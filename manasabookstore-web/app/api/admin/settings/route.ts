@@ -29,6 +29,11 @@ export async function PATCH(request: Request) {
     onlineOrderingEnabled: Boolean(body.onlineOrderingEnabled),
     pickupEnabled: Boolean(body.pickupEnabled),
     deliveryEnabled: Boolean(body.deliveryEnabled),
+    phonePeUpiId: body.phonePeUpiId ?? "",
+    phonePeMerchantName: body.phonePeMerchantName ?? "Manasa Book Center",
+    onlineUpiPaymentEnabled: Boolean(body.onlineUpiPaymentEnabled),
+    payAtStoreEnabled: Boolean(body.payAtStoreEnabled),
+    pickupPaymentEnabled: Boolean(body.pickupPaymentEnabled),
   });
 
   if (!updated) {
@@ -40,4 +45,3 @@ export async function PATCH(request: Request) {
 
   return NextResponse.json(updated);
 }
-

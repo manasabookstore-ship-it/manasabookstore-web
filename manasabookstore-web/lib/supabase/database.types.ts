@@ -248,6 +248,11 @@ export type Database = {
           online_ordering_enabled: boolean;
           pickup_enabled: boolean;
           delivery_enabled: boolean;
+          phonepe_upi_id: string | null;
+          phonepe_merchant_name: string;
+          online_upi_payment_enabled: boolean;
+          pay_at_store_enabled: boolean;
+          pickup_payment_enabled: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -261,6 +266,11 @@ export type Database = {
           online_ordering_enabled?: boolean;
           pickup_enabled?: boolean;
           delivery_enabled?: boolean;
+          phonepe_upi_id?: string | null;
+          phonepe_merchant_name?: string;
+          online_upi_payment_enabled?: boolean;
+          pay_at_store_enabled?: boolean;
+          pickup_payment_enabled?: boolean;
           created_at?: string;
           updated_at?: string;
         };

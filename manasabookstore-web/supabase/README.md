@@ -67,3 +67,14 @@ Customer requests are always saved to the `orders` table. To also send the owner
 `OWNER_WHATSAPP_PHONE` should include the country code, for example `919948030907`.
 
 Without these variables, the request still saves to Supabase and the customer still gets a prefilled WhatsApp button.
+
+## PhonePe / UPI Payments
+
+Checkout is structured for PhonePe / UPI, pay at store, and pay during pickup.
+No live payment is processed yet. Before enabling these controls in production,
+run `supabase/payment-settings.sql` once so `store_settings` has the PhonePe
+and payment toggle fields.
+
+Future PhonePe Payment Gateway work should replace the current UPI intent helper
+with official merchant order creation, callback handling, and server-side payment
+verification.

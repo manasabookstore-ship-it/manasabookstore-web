@@ -138,6 +138,11 @@ create table public.store_settings (
   online_ordering_enabled boolean not null default false,
   pickup_enabled boolean not null default false,
   delivery_enabled boolean not null default false,
+  phonepe_upi_id text,
+  phonepe_merchant_name text not null default 'Manasa Book Center',
+  online_upi_payment_enabled boolean not null default false,
+  pay_at_store_enabled boolean not null default true,
+  pickup_payment_enabled boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -320,7 +325,12 @@ insert into public.store_settings (
   map_url,
   online_ordering_enabled,
   pickup_enabled,
-  delivery_enabled
+  delivery_enabled,
+  phonepe_upi_id,
+  phonepe_merchant_name,
+  online_upi_payment_enabled,
+  pay_at_store_enabled,
+  pickup_payment_enabled
 )
 values (
   'Manasa Book Center',
@@ -330,6 +340,10 @@ values (
   'https://www.google.com/maps/search/?api=1&query=Manasa%20Book%20Center%2C%20Kurnool%20Main%20Road%2C%20Chimakurthy%2C%20Andhra%20Pradesh%20523226',
   false,
   false,
+  false,
+  null,
+  'Manasa Book Center',
+  false,
+  true,
   false
 );
-

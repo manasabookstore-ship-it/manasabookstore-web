@@ -10,13 +10,19 @@ export async function getCommerceSettingsFromSupabase(): Promise<CommerceSetting
       onlineOrderingEnabled: false,
       pickupEnabled: false,
       deliveryEnabled: false,
-      razorpayEnabled: false,
+      phonePeUpiId: "",
+      phonePeMerchantName: "Manasa Book Center",
+      onlineUpiPaymentEnabled: false,
+      payAtStoreEnabled: true,
+      pickupPaymentEnabled: true,
     };
   }
 
   const { data } = await supabase
     .from("store_settings")
-    .select("online_ordering_enabled, pickup_enabled, delivery_enabled")
+    .select(
+      "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled",
+    )
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -25,14 +31,16 @@ export async function getCommerceSettingsFromSupabase(): Promise<CommerceSetting
     onlineOrderingEnabled: data?.online_ordering_enabled ?? false,
     pickupEnabled: data?.pickup_enabled ?? false,
     deliveryEnabled: data?.delivery_enabled ?? false,
-    razorpayEnabled: Boolean(
-      process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET,
-    ),
+    phonePeUpiId: data?.phonepe_upi_id ?? "",
+    phonePeMerchantName: data?.phonepe_merchant_name ?? "Manasa Book Center",
+    onlineUpiPaymentEnabled: data?.online_upi_payment_enabled ?? false,
+    payAtStoreEnabled: data?.pay_at_store_enabled ?? true,
+    pickupPaymentEnabled: data?.pickup_payment_enabled ?? true,
   };
 }
 
 export async function updateCommerceSettingsInSupabase(
-  settings: Omit<CommerceSettings, "razorpayEnabled">,
+  settings: CommerceSettings,
 ) {
   const supabase = createSupabaseServiceClient();
 
@@ -52,6 +60,12 @@ export async function updateCommerceSettingsInSupabase(
     online_ordering_enabled: settings.onlineOrderingEnabled,
     pickup_enabled: settings.pickupEnabled,
     delivery_enabled: settings.deliveryEnabled,
+    phonepe_upi_id: settings.phonePeUpiId.trim() || null,
+    phonepe_merchant_name:
+      settings.phonePeMerchantName.trim() || "Manasa Book Center",
+    online_upi_payment_enabled: settings.onlineUpiPaymentEnabled,
+    pay_at_store_enabled: settings.payAtStoreEnabled,
+    pickup_payment_enabled: settings.pickupPaymentEnabled,
   };
 
   const query = current
@@ -59,12 +73,16 @@ export async function updateCommerceSettingsInSupabase(
         .from("store_settings")
         .update(payload)
         .eq("id", current.id)
-        .select("online_ordering_enabled, pickup_enabled, delivery_enabled")
+        .select(
+          "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled",
+        )
         .single()
     : supabase
         .from("store_settings")
         .insert(payload)
-        .select("online_ordering_enabled, pickup_enabled, delivery_enabled")
+        .select(
+          "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled",
+        )
         .single();
 
   const { data, error } = await query;
@@ -77,9 +95,11 @@ export async function updateCommerceSettingsInSupabase(
     onlineOrderingEnabled: data.online_ordering_enabled,
     pickupEnabled: data.pickup_enabled,
     deliveryEnabled: data.delivery_enabled,
-    razorpayEnabled: Boolean(
-      process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET,
-    ),
+    phonePeUpiId: data.phonepe_upi_id ?? "",
+    phonePeMerchantName: data.phonepe_merchant_name ?? "Manasa Book Center",
+    onlineUpiPaymentEnabled: data.online_upi_payment_enabled,
+    payAtStoreEnabled: data.pay_at_store_enabled,
+    pickupPaymentEnabled: data.pickup_payment_enabled,
   };
 }
 
@@ -226,4 +246,3 @@ export async function getOrderHistoryFromSupabase(phone: string) {
     createdAt: order.created_at,
   }));
 }
-
