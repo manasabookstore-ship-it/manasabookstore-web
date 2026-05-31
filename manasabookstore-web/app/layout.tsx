@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Footer } from "@/components/site/Footer";
+import { Header } from "@/components/site/Header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Manasa Book Store | Books, Stationery and School Essentials",
+  title: "Manasa Book Center | Books, Stationery and Student Essentials",
   description:
-    "Manasa Book Store in Chimakurthy for books, stationery, school essentials, project materials, engineering tools and gifts.",
+    "Manasa Book Center in Chimakurthy for books, stationery, school essentials, project materials, engineering tools and gifts.",
   icons: {
     icon: "/manasa-logo-mark.svg",
     apple: "/manasa-logo-mark.svg",
@@ -32,7 +34,11 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col bg-[#fbf7ef] text-[#071f33]">
+        <Header />
+        <div className="flex-1">{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 }
