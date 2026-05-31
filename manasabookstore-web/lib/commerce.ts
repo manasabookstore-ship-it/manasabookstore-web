@@ -16,20 +16,28 @@ export type CustomerProfile = {
 };
 
 export type CheckoutMode = "pickup" | "delivery";
-export type PaymentMode = "pay_at_store" | "razorpay";
+export type PaymentMode = "phonepe_upi" | "pay_at_store_pickup";
 
 export type CommerceSettings = {
   onlineOrderingEnabled: boolean;
   pickupEnabled: boolean;
   deliveryEnabled: boolean;
-  razorpayEnabled: boolean;
+  phonePeUpiId: string;
+  phonePeMerchantName: string;
+  onlineUpiPaymentEnabled: boolean;
+  payAtStoreEnabled: boolean;
+  pickupPaymentEnabled: boolean;
 };
 
 export const defaultCommerceSettings: CommerceSettings = {
   onlineOrderingEnabled: false,
   pickupEnabled: false,
   deliveryEnabled: false,
-  razorpayEnabled: false,
+  phonePeUpiId: "",
+  phonePeMerchantName: "Manasa Book Center",
+  onlineUpiPaymentEnabled: false,
+  payAtStoreEnabled: true,
+  pickupPaymentEnabled: true,
 };
 
 export function parseProductPrice(price: string) {
@@ -50,4 +58,3 @@ export function productToCartItem(product: Product): CartItem {
 export function cartSubtotal(items: CartItem[]) {
   return items.reduce((total, item) => total + item.price * item.quantity, 0);
 }
-

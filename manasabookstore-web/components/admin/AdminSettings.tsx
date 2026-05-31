@@ -33,6 +33,15 @@ export function AdminSettings() {
   async function updateSetting(key: keyof CommerceSettings, value: boolean) {
     const nextSettings = { ...settings, [key]: value };
     setSettings(nextSettings);
+    await saveSettings(nextSettings);
+  }
+
+  async function updateTextSetting(key: keyof CommerceSettings, value: string) {
+    const nextSettings = { ...settings, [key]: value };
+    setSettings(nextSettings);
+  }
+
+  async function saveSettings(nextSettings = settings) {
     setSaving(true);
     const saved = await updateAdminCommerceSettings(nextSettings);
     if (saved) {
@@ -72,6 +81,30 @@ export function AdminSettings() {
             Customer checkout features only appear when enabled here.
           </p>
           <div className="mt-5 grid gap-3">
+            <label className="grid gap-2 rounded-[8px] bg-[#f7faf9] p-4 text-sm font-black">
+              PhonePe UPI ID
+              <input
+                value={settings.phonePeUpiId}
+                onChange={(event) =>
+                  updateTextSetting("phonePeUpiId", event.target.value)
+                }
+                onBlur={() => saveSettings()}
+                placeholder="merchant@upi"
+                className="h-11 rounded-[8px] border border-[#071f33]/12 bg-white px-3 text-sm font-bold outline-none"
+              />
+            </label>
+            <label className="grid gap-2 rounded-[8px] bg-[#f7faf9] p-4 text-sm font-black">
+              PhonePe merchant name
+              <input
+                value={settings.phonePeMerchantName}
+                onChange={(event) =>
+                  updateTextSetting("phonePeMerchantName", event.target.value)
+                }
+                onBlur={() => saveSettings()}
+                placeholder="Manasa Book Center"
+                className="h-11 rounded-[8px] border border-[#071f33]/12 bg-white px-3 text-sm font-bold outline-none"
+              />
+            </label>
             <Toggle
               label="Online ordering"
               checked={settings.onlineOrderingEnabled}
@@ -87,8 +120,26 @@ export function AdminSettings() {
               checked={settings.deliveryEnabled}
               onChange={(value) => updateSetting("deliveryEnabled", value)}
             />
-            <div className="rounded-[8px] bg-[#f7faf9] p-4 text-sm font-bold text-[#071f33]/64">
-              Razorpay is {settings.razorpayEnabled ? "configured" : "not configured"}.
+            <Toggle
+              label="Enable online UPI payment"
+              checked={settings.onlineUpiPaymentEnabled}
+              onChange={(value) =>
+                updateSetting("onlineUpiPaymentEnabled", value)
+              }
+            />
+            <Toggle
+              label="Enable pay at store"
+              checked={settings.payAtStoreEnabled}
+              onChange={(value) => updateSetting("payAtStoreEnabled", value)}
+            />
+            <Toggle
+              label="Enable pickup payment"
+              checked={settings.pickupPaymentEnabled}
+              onChange={(value) => updateSetting("pickupPaymentEnabled", value)}
+            />
+            <div className="rounded-[8px] bg-[#f7faf9] p-4 text-sm font-bold leading-6 text-[#071f33]/64">
+              PhonePe gateway is not live yet. The checkout only creates orders
+              and can open a UPI intent when online UPI is enabled.
             </div>
           </div>
           {saving ? (

@@ -32,6 +32,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Delivery is disabled" }, { status: 403 });
   }
 
+  if (
+    payload.paymentMode === "phonepe_upi" &&
+    !settings.onlineUpiPaymentEnabled
+  ) {
+    return NextResponse.json(
+      { error: "PhonePe / UPI payment is disabled" },
+      { status: 403 },
+    );
+  }
+
+  if (
+    payload.paymentMode === "pay_at_store_pickup" &&
+    (!settings.payAtStoreEnabled ||
+      !settings.pickupPaymentEnabled ||
+      payload.fulfillment !== "pickup")
+  ) {
+    return NextResponse.json(
+      { error: "Pay at store during pickup is disabled" },
+      { status: 403 },
+    );
+  }
+
   const subtotal = payload.items.reduce(
     (total, item) => total + item.price * item.quantity,
     0,
@@ -53,4 +75,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json(order);
 }
-

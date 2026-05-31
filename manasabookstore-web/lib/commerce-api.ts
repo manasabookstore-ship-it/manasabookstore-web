@@ -18,7 +18,6 @@ export type CheckoutResponse = {
   id: string;
   status: string;
   total: number;
-  razorpayOrderId?: string;
 };
 
 export async function fetchCommerceSettings(): Promise<CommerceSettings | null> {
@@ -86,20 +85,4 @@ export async function validateCoupon(code: string, subtotal: number) {
     title: string;
     discount: number;
   };
-}
-
-export async function createRazorpayOrder(amount: number) {
-  const response = await fetch("/api/commerce/razorpay-order", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ amount }),
-  });
-
-  if (!response.ok) {
-    return null;
-  }
-
-  return (await response.json()) as { id: string };
 }

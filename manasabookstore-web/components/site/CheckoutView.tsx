@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { CreditCard, PackageCheck } from "lucide-react";
+import { Landmark, PackageCheck, Smartphone } from "lucide-react";
 
 import {
   CheckoutMode,
@@ -11,10 +11,10 @@ import {
 } from "@/lib/commerce";
 import {
   fetchCommerceSettings,
-  createRazorpayOrder,
   submitCheckout,
   validateCoupon,
 } from "@/lib/commerce-api";
+import { buildPhonePeUpiIntent } from "@/lib/payments/phonepe-provider";
 import { useCart } from "./CartProvider";
 
 const profileKey = "manasa-customer-profile";
@@ -36,7 +36,8 @@ export function CheckoutView() {
   const [settings, setSettings] = useState(defaultCommerceSettings);
   const [customer, setCustomer] = useState<CustomerProfile>(readProfile);
   const [fulfillment, setFulfillment] = useState<CheckoutMode>("pickup");
-  const [paymentMode, setPaymentMode] = useState<PaymentMode>("pay_at_store");
+  const [paymentMode, setPaymentMode] =
+    useState<PaymentMode>("pay_at_store_pickup");
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [message, setMessage] = useState("");
@@ -61,7 +62,21 @@ export function CheckoutView() {
     !settings.onlineOrderingEnabled ||
     !items.length ||
     (fulfillment === "pickup" && !settings.pickupEnabled) ||
-    (fulfillment === "delivery" && !settings.deliveryEnabled);
+    (fulfillment === "delivery" && !settings.deliveryEnabled) ||
+    (paymentMode === "phonepe_upi" && !settings.onlineUpiPaymentEnabled) ||
+    (paymentMode === "pay_at_store_pickup" &&
+      (!settings.payAtStoreEnabled ||
+        !settings.pickupPaymentEnabled ||
+        fulfillment !== "pickup"));
+
+  const upiIntent = buildPhonePeUpiIntent(
+    {
+      enabled: settings.onlineUpiPaymentEnabled,
+      merchantName: settings.phonePeMerchantName,
+      upiId: settings.phonePeUpiId,
+    },
+    total,
+  );
 
   function updateCustomer(field: keyof CustomerProfile, value: string) {
     setCustomer((current) => ({ ...current, [field]: value }));
@@ -94,14 +109,6 @@ export function CheckoutView() {
 
     window.localStorage.setItem(profileKey, JSON.stringify(customer));
     setSaving(true);
-    const razorpayOrder =
-      paymentMode === "razorpay" ? await createRazorpayOrder(total) : null;
-
-    if (paymentMode === "razorpay" && !razorpayOrder) {
-      setSaving(false);
-      setMessage("Razorpay could not be started. Choose pay at store.");
-      return;
-    }
 
     const order = await submitCheckout({
       customer,
@@ -127,7 +134,7 @@ export function CheckoutView() {
         <p className="text-sm font-black text-[#d86b13]">Checkout</p>
         <h1 className="mt-2 text-4xl font-black">Pickup or delivery order</h1>
         <p className="mt-3 text-sm font-semibold text-[#071f33]/62">
-          Features here follow admin store settings.
+          Checkout and payment choices follow admin store settings.
         </p>
       </div>
 
@@ -179,26 +186,48 @@ export function CheckoutView() {
 
           <h2 className="mt-7 text-xl font-black">Payment</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <label className="rounded-[8px] bg-[#f7faf9] p-4 text-sm font-black">
+            <label className="rounded-[8px] bg-[#f7faf9] p-4 text-sm font-black has-[:disabled]:opacity-55">
               <input
                 type="radio"
-                checked={paymentMode === "pay_at_store"}
-                onChange={() => setPaymentMode("pay_at_store")}
+                checked={paymentMode === "phonepe_upi"}
+                disabled={!settings.onlineUpiPaymentEnabled}
+                onChange={() => setPaymentMode("phonepe_upi")}
                 className="mr-2 accent-[#0b6b4a]"
               />
-              Pay at store
+              Pay using PhonePe / UPI
+              <span className="mt-2 block text-xs font-semibold leading-5 text-[#071f33]/58">
+                {settings.onlineUpiPaymentEnabled
+                  ? "No live gateway yet. Store will confirm the UPI payment."
+                  : "Disabled by store settings."}
+              </span>
             </label>
-            <label className="rounded-[8px] bg-[#f7faf9] p-4 text-sm font-black">
+            <label className="rounded-[8px] bg-[#f7faf9] p-4 text-sm font-black has-[:disabled]:opacity-55">
               <input
                 type="radio"
-                checked={paymentMode === "razorpay"}
-                disabled={!settings.razorpayEnabled}
-                onChange={() => setPaymentMode("razorpay")}
+                checked={paymentMode === "pay_at_store_pickup"}
+                disabled={
+                  !settings.payAtStoreEnabled ||
+                  !settings.pickupPaymentEnabled ||
+                  fulfillment !== "pickup"
+                }
+                onChange={() => setPaymentMode("pay_at_store_pickup")}
                 className="mr-2 accent-[#0b6b4a]"
               />
-              Razorpay
+              Pay at store during pickup
+              <span className="mt-2 block text-xs font-semibold leading-5 text-[#071f33]/58">
+                Available only for pickup orders when enabled by the store.
+              </span>
             </label>
           </div>
+          {upiIntent && paymentMode === "phonepe_upi" ? (
+            <a
+              href={upiIntent}
+              className="mt-4 inline-flex h-11 items-center gap-2 rounded-[8px] bg-[#0b6b4a] px-4 text-sm font-black text-white"
+            >
+              <Smartphone className="h-4 w-4" />
+              Open UPI app
+            </a>
+          ) : null}
         </section>
 
         <aside className="h-fit rounded-[8px] border border-[#071f33]/10 bg-white p-5 shadow-sm">
@@ -251,7 +280,7 @@ export function CheckoutView() {
             disabled={checkoutDisabled || saving}
             className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[8px] bg-[#071f33] text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <CreditCard className="h-4 w-4" />
+            <Landmark className="h-4 w-4" />
             {saving ? "Placing order..." : "Place order"}
           </button>
         </aside>
