@@ -1,14 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ClipboardPlus, Search, SlidersHorizontal } from "lucide-react";
 
+import { PublicProductSuggestion } from "@/lib/public-product-lookup";
 import type { Category, Product } from "@/lib/site-data";
+import { ProductLookupCard } from "./ProductLookupCard";
 import { ProductCard } from "./ProductCard";
 
 type ProductBrowserProps = {
   products: Product[];
   categories: Category[];
+  initialQuery?: string;
   initialCategorySlug?: string;
   lockCategory?: boolean;
 };
@@ -16,11 +19,14 @@ type ProductBrowserProps = {
 export function ProductBrowser({
   products,
   categories,
+  initialQuery = "",
   initialCategorySlug = "all",
   lockCategory = false,
 }: ProductBrowserProps) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [categorySlug, setCategorySlug] = useState(initialCategorySlug);
+  const [lookupResults, setLookupResults] = useState<PublicProductSuggestion[]>([]);
+  const [lookupLoading, setLookupLoading] = useState(false);
 
   const visibleProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -48,6 +54,55 @@ export function ProductBrowser({
   }, [categorySlug, lockCategory, products, query]);
 
   const featured = visibleProducts.filter((product) => product.featured);
+  const normalizedQuery = query.trim();
+  const shouldLookup = visibleProducts.length === 0 && normalizedQuery.length >= 3;
+  const visibleLookupResults = shouldLookup ? lookupResults : [];
+  const isLookupLoading = shouldLookup && lookupLoading;
+
+  useEffect(() => {
+    if (!shouldLookup) {
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      setLookupLoading(true);
+
+      try {
+        const response = await fetch(
+          `/api/product-lookup?q=${encodeURIComponent(normalizedQuery)}`,
+          {
+            cache: "no-store",
+            signal: controller.signal,
+          },
+        );
+
+        if (!response.ok) {
+          setLookupResults([]);
+          return;
+        }
+
+        const data = (await response.json()) as {
+          suggestions?: PublicProductSuggestion[];
+        };
+
+        setLookupResults(data.suggestions ?? []);
+      } catch {
+        if (!controller.signal.aborted) {
+          setLookupResults([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLookupLoading(false);
+        }
+      }
+    }, 450);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [normalizedQuery, shouldLookup]);
 
   return (
     <section>
@@ -127,9 +182,57 @@ export function ProductBrowser({
         <div className="mt-8 rounded-[8px] border border-dashed border-[#071f33]/20 bg-white p-8 text-center">
           <h2 className="text-2xl font-black">No matching products yet.</h2>
           <p className="mt-2 text-sm leading-6 text-[#071f33]/64">
-            Try another keyword or request the item directly from the store.
+            We can still help source it through Manasa.
           </p>
         </div>
+      ) : null}
+
+      {shouldLookup ? (
+        <section className="mt-8">
+          <div className="mb-4 flex items-start gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[8px] bg-[#fff3da] text-[#d86b13]">
+              <ClipboardPlus className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-black text-[#d86b13]">
+                Request Through Manasa
+              </p>
+              <h2 className="mt-1 text-2xl font-black">
+                Suggested items we can review for you
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[#071f33]/62">
+                These are lookup suggestions, not confirmed store stock. Send a
+                request and the team can check availability.
+              </p>
+            </div>
+          </div>
+
+          {isLookupLoading ? (
+            <p className="rounded-[8px] bg-white p-4 text-sm font-bold text-[#071f33]/62 shadow-sm">
+              Looking for requestable items...
+            </p>
+          ) : null}
+
+          {!isLookupLoading && visibleLookupResults.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {visibleLookupResults.map((suggestion) => (
+                <ProductLookupCard
+                  key={`${suggestion.source}-${suggestion.id}`}
+                  suggestion={suggestion}
+                />
+              ))}
+            </div>
+          ) : null}
+
+          {!isLookupLoading && visibleLookupResults.length === 0 ? (
+            <div className="rounded-[8px] bg-white p-5 shadow-sm">
+              <p className="text-sm font-bold text-[#071f33]/64">
+                No public suggestions found. You can still send this item name
+                as a direct request.
+              </p>
+            </div>
+          ) : null}
+        </section>
       ) : null}
     </section>
   );

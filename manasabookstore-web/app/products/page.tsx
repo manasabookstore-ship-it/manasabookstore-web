@@ -3,8 +3,15 @@ import { RequestedItemsStrip } from "@/components/site/RequestedItemsStrip";
 import { categories, products } from "@/lib/site-data";
 import { getPublicRequestedItemsFromSupabase } from "@/lib/supabase/public-requests";
 
-export default async function ProductsPage() {
-  const requestedItems = await getPublicRequestedItemsFromSupabase(10);
+type ProductsPageProps = {
+  searchParams: Promise<{ q?: string }>;
+};
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const [params, requestedItems] = await Promise.all([
+    searchParams,
+    getPublicRequestedItemsFromSupabase(10),
+  ]);
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
@@ -21,7 +28,11 @@ export default async function ProductsPage() {
       </div>
 
       <div className="mt-8">
-        <ProductBrowser products={products} categories={categories} />
+        <ProductBrowser
+          products={products}
+          categories={categories}
+          initialQuery={params.q ?? ""}
+        />
       </div>
 
       <RequestedItemsStrip items={requestedItems} />
