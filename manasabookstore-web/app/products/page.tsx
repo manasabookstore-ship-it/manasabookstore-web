@@ -1,7 +1,11 @@
 import { ProductBrowser } from "@/components/site/ProductBrowser";
+import { RequestedItemsStrip } from "@/components/site/RequestedItemsStrip";
 import { categories, products } from "@/lib/site-data";
+import { getPublicRequestedItemsFromSupabase } from "@/lib/supabase/public-requests";
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const requestedItems = await getPublicRequestedItemsFromSupabase(10);
+
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
       <div className="max-w-3xl">
@@ -19,6 +23,8 @@ export default function ProductsPage() {
       <div className="mt-8">
         <ProductBrowser products={products} categories={categories} />
       </div>
+
+      <RequestedItemsStrip items={requestedItems} />
     </main>
   );
 }
