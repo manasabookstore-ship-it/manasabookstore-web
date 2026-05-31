@@ -4,7 +4,6 @@ import {
   BadgePercent,
   BookMarked,
   CheckCircle2,
-  Clock3,
   MapPin,
   MousePointerClick,
   PackageCheck,
@@ -63,7 +62,7 @@ export default function HomePage() {
                 Store Highlights
               </p>
               <h2 className="mt-2 text-3xl font-black leading-tight sm:text-5xl">
-                A local store experience with a sharper digital future.
+                A trusted local store experience with clearer product discovery.
               </h2>
               <p className="mt-4 text-base leading-8 text-[#071f33]/68">
                 Manasa is positioned for students, parents, hostellers and
@@ -88,9 +87,9 @@ export default function HomePage() {
                   text: "Categories and product pages help customers browse before visiting.",
                 },
                 {
-                  icon: Clock3,
-                  title: "Digital features soon",
-                  text: "Online ordering, pickup, and delivery features are coming soon.",
+                  icon: MousePointerClick,
+                  title: "Easy item requests",
+                  text: "Customers can request books, supplies and project materials directly from the website.",
                 },
               ].map((item) => {
                 const Icon = item.icon;
@@ -119,7 +118,7 @@ export default function HomePage() {
               Featured Products
             </p>
             <h2 className="mt-2 max-w-2xl text-3xl font-black leading-tight sm:text-5xl">
-              A premium catalog preview without backend complexity.
+              A polished catalog for quick product discovery.
             </h2>
           </div>
           <Link
@@ -146,8 +145,8 @@ export default function HomePage() {
               Useful combos and seasonal picks.
             </h2>
             <p className="mt-4 text-base leading-8 text-white/68">
-              Offer cards are ready for future campaigns while keeping today’s
-              site simple and fast.
+              Seasonal product picks and useful bundles help customers plan
+              school, project and gifting purchases.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -170,8 +169,7 @@ export default function HomePage() {
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-8 text-[#071f33]/68">
               Customers can share book names, school lists, project materials or
-              product requirements. This keeps the homepage useful today while
-              full commerce features are still being built.
+              product requirements so the store team can review availability.
             </p>
             <Link
               href="/request"
@@ -209,8 +207,7 @@ export default function HomePage() {
             </h2>
             <p className="mt-4 text-base leading-8 text-[#071f33]/68">
               Find the store on Kurnool Main Road and use the website to
-              understand categories, product types and upcoming digital
-              services.
+              understand categories, product types and store contact options.
             </p>
             <a
               href={site.directions}
@@ -229,16 +226,16 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-22">
         <div className="rounded-[8px] bg-[#071f33] p-6 text-white sm:p-8 lg:p-10">
           <p className="text-sm font-black text-[#ffd493]">
-            Future Digital Services
+            Digital Storefront
           </p>
           <div className="mt-4 grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <h2 className="text-3xl font-black leading-tight sm:text-5xl">
-              The store is preparing for a more digital customer experience.
+              A practical online front for a real local store.
             </h2>
             <p className="text-base leading-8 text-white/68">
-              Online ordering, pickup, and delivery features are coming soon.
-              For now, this website creates a premium discovery layer customers
-              can trust.
+              Manasa Book Center customers can browse categories, discover
+              product types, request items and get directions from one reliable
+              place.
             </p>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -250,13 +247,13 @@ export default function HomePage() {
               },
               {
                 icon: MousePointerClick,
-                title: "Online ordering soon",
-                text: "Prepared for future ordering flows without adding backend now.",
+                title: "Request items online",
+                text: "Send book lists, school requirements and product requests from the website.",
               },
               {
                 icon: Sparkles,
                 title: "Modern local commerce",
-                text: "A polished foundation that can grow into mobile and web commerce.",
+                text: "A clean customer experience for a trusted Chimakurthy store.",
               },
             ].map((item) => {
               const Icon = item.icon;

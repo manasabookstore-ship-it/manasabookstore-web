@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Menu, Phone } from "lucide-react";
 
 import { site } from "@/lib/site-data";
+import { CartHeaderLink } from "./CartHeaderLink";
 import { SearchBar } from "./SearchBar";
 
 const navItems = [
@@ -10,6 +11,7 @@ const navItems = [
   { href: "/products", label: "Products" },
   { href: "/offers", label: "Offers" },
   { href: "/request", label: "Request" },
+  { href: "/orders", label: "Orders" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -51,6 +53,8 @@ export function Header() {
           <Phone className="h-4 w-4" />
           {site.phone}
         </a>
+
+        <CartHeaderLink />
 
         <details className="relative ml-auto lg:hidden">
           <summary className="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-[8px] border border-[#071f33]/12 bg-white text-[#071f33] shadow-sm [&::-webkit-details-marker]:hidden">

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, MessageCircle, PackageCheck } from "lucide-react";
 
 import { AvailabilityBadge } from "@/components/site/AvailabilityBadge";
+import { AddToCartButton } from "@/components/site/AddToCartButton";
 import { ProductCard } from "@/components/site/ProductCard";
 import { RecentlyViewedProducts } from "@/components/site/RecentlyViewedProducts";
 import {
@@ -123,6 +124,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             >
               Request similar item
             </Link>
+            <AddToCartButton product={product} />
           </div>
         </div>
       </section>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CheckCircle2, Send } from "lucide-react";
+import { CheckCircle2, MessageCircle, Send } from "lucide-react";
 
+import { submitCustomerRequest } from "@/lib/request-api";
 import type { Category } from "@/lib/site-data";
 
 type RequestFormValues = {
@@ -50,6 +51,10 @@ export function RequestForm({ categories }: { categories: Category[] }) {
   const [values, setValues] = useState<RequestFormValues>(initialValues);
   const [errors, setErrors] = useState<RequestFormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [whatsappHref, setWhatsappHref] = useState("");
+  const [requestId, setRequestId] = useState("");
 
   const selectedCategory = useMemo(() => {
     return categories.find((category) => category.slug === values.category);
@@ -60,8 +65,9 @@ export function RequestForm({ categories }: { categories: Category[] }) {
     setErrors((current) => ({ ...current, [field]: undefined }));
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSubmitError("");
 
     const nextErrors = validate(values);
     setErrors(nextErrors);
@@ -71,10 +77,20 @@ export function RequestForm({ categories }: { categories: Category[] }) {
       return;
     }
 
-    // Future Supabase integration point:
-    // await supabase.from("item_requests").insert({
-    //   name, phone, category, requested_item, notes
-    // })
+    setSaving(true);
+    const response = await submitCustomerRequest({
+      ...values,
+      category: selectedCategory?.name ?? values.category,
+    });
+    setSaving(false);
+
+    if (!response) {
+      setSubmitError("Request could not be saved. Please try WhatsApp.");
+      return;
+    }
+
+    setWhatsappHref(response.whatsappHref);
+    setRequestId(response.id);
     setSubmitted(true);
   }
 
@@ -88,28 +104,45 @@ export function RequestForm({ categories }: { categories: Category[] }) {
           Your request has been recorded.
         </h2>
         <p className="mt-3 text-base leading-7 text-[#071f33]/68">
-          Store team will review availability.
+          Store team will review availability. Send the formatted WhatsApp
+          message as well for faster follow-up.
         </p>
         <div className="mt-6 rounded-[8px] bg-[#fbf7ef] p-4">
           <p className="text-xs font-black uppercase tracking-wide text-[#071f33]/48">
             Request summary
+          </p>
+          <p className="mt-2 text-xs font-bold text-[#071f33]/52">
+            ID: {requestId}
           </p>
           <p className="mt-2 text-sm font-black">{values.requestedItem}</p>
           <p className="mt-1 text-sm text-[#071f33]/64">
             {selectedCategory?.name}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setValues(initialValues);
-            setSubmitted(false);
-            setErrors({});
-          }}
-          className="mt-6 inline-flex h-12 items-center rounded-[8px] bg-[#071f33] px-5 text-sm font-black text-white"
-        >
-          Create another request
-        </button>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex h-12 items-center gap-2 rounded-[8px] bg-[#10a36f] px-5 text-sm font-black text-white"
+          >
+            <MessageCircle className="h-4 w-4" />
+            Send on WhatsApp
+          </a>
+          <button
+            type="button"
+            onClick={() => {
+              setValues(initialValues);
+              setSubmitted(false);
+              setErrors({});
+              setWhatsappHref("");
+              setRequestId("");
+            }}
+            className="inline-flex h-12 items-center rounded-[8px] bg-[#071f33] px-5 text-sm font-black text-white"
+          >
+            Create another request
+          </button>
+        </div>
       </section>
     );
   }
@@ -177,16 +210,23 @@ export function RequestForm({ categories }: { categories: Category[] }) {
       </Field>
 
       <div className="mt-5 rounded-[8px] bg-[#fbf7ef] p-4 text-sm leading-6 text-[#071f33]/66">
-        This form saves the request only in the current page state for now. It
-        is structured for future Supabase integration.
+        Your request is saved for the store team and a formatted WhatsApp
+        message is prepared after submission.
       </div>
+
+      {submitError ? (
+        <p className="mt-4 rounded-[8px] bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+          {submitError}
+        </p>
+      ) : null}
 
       <button
         type="submit"
-        className="mt-5 inline-flex h-12 items-center gap-2 rounded-[8px] bg-[#071f33] px-5 text-sm font-black text-white transition hover:bg-[#0b6b4a]"
+        disabled={saving}
+        className="mt-5 inline-flex h-12 items-center gap-2 rounded-[8px] bg-[#071f33] px-5 text-sm font-black text-white transition hover:bg-[#0b6b4a] disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Send className="h-4 w-4" />
-        Submit request
+        {saving ? "Saving request..." : "Submit request"}
       </button>
     </form>
   );

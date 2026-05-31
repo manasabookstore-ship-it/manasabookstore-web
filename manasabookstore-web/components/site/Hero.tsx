@@ -4,9 +4,9 @@ import {
   BookOpen,
   CheckCircle2,
   MapPin,
-  MousePointerClick,
   PackageCheck,
   Sparkles,
+  Store,
 } from "lucide-react";
 
 import { SearchBar } from "./SearchBar";
@@ -28,11 +28,12 @@ export function Hero() {
             </span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/78 sm:text-xl">
-            A trusted local store in Chimakurthy, now building its digital
-            front.
+            A trusted local store in Chimakurthy for books, stationery, school
+            essentials, project materials and daily student needs.
           </p>
           <div className="mt-6 max-w-2xl rounded-[8px] border border-white/12 bg-white/10 p-4 text-sm font-bold leading-6 text-white/82 shadow-2xl backdrop-blur">
-            Online ordering, pickup, and delivery features are coming soon.
+            Browse products, check categories and request specific items before
+            visiting the store.
           </div>
           <div className="mt-8 max-w-2xl">
             <SearchBar placeholder="Search books, stationery, school items..." />
@@ -76,7 +77,7 @@ export function Hero() {
                   { icon: BookOpen, label: "Books and references" },
                   { icon: PackageCheck, label: "School essentials" },
                   { icon: CheckCircle2, label: "Project materials" },
-                  { icon: MousePointerClick, label: "Digital store soon" },
+                  { icon: Store, label: "Local store support" },
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
@@ -93,11 +94,11 @@ export function Hero() {
 
               <div className="mt-4 rounded-[8px] bg-[#071f33] p-5 text-white">
                 <p className="text-sm font-black text-[#ffd493]">
-                  Coming next
+                  Visit prepared
                 </p>
                 <p className="mt-2 text-base leading-7 text-white/74">
-                  A faster way to discover products, request items and prepare
-                  store visits through Manasa&apos;s digital front.
+                  Discover product types, send requests and plan store visits
+                  with clear information from Manasa Book Center.
                 </p>
               </div>
             </div>

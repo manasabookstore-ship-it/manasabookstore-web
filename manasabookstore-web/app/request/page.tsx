@@ -16,8 +16,8 @@ export default function RequestPage() {
         </h1>
         <p className="mt-4 text-base leading-7 text-[#071f33]/68">
           Share the item you need and the store team can review availability.
-          This is a client-side request experience, ready to connect to
-          Supabase later.
+          Requests are saved for the admin team, and a formatted WhatsApp
+          message is prepared for faster follow-up.
         </p>
         <div className="mt-6 rounded-[8px] border border-[#071f33]/10 bg-white p-5 shadow-sm">
           <p className="text-sm font-black text-[#071f33]">
