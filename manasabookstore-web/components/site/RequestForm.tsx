@@ -47,8 +47,20 @@ function validate(values: RequestFormValues) {
   return errors;
 }
 
-export function RequestForm({ categories }: { categories: Category[] }) {
-  const [values, setValues] = useState<RequestFormValues>(initialValues);
+export function RequestForm({
+  categories,
+  initialItem = "",
+  initialCategory = "",
+}: {
+  categories: Category[];
+  initialItem?: string;
+  initialCategory?: string;
+}) {
+  const [values, setValues] = useState<RequestFormValues>({
+    ...initialValues,
+    category: initialCategory,
+    requestedItem: initialItem,
+  });
   const [errors, setErrors] = useState<RequestFormErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);

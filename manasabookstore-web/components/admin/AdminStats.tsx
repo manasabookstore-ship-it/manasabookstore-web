@@ -13,7 +13,7 @@ export function AdminStats({ title, value, note, icon: Icon }: AdminStatsProps) 
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-black text-[#071f33]/58">{title}</p>
-          <p className="mt-2 text-3xl font-black">{value}</p>
+          <p className="mt-2 break-words text-3xl font-black">{value}</p>
         </div>
         <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#f5ead7] text-[#d86b13]">
           <Icon className="h-5 w-5" />

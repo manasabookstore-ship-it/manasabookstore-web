@@ -3,16 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   BarChart3,
   Boxes,
   ClipboardList,
   LayoutDashboard,
   LogOut,
+  Menu,
   PlusCircle,
   ReceiptText,
   Settings,
   UserPlus,
+  X,
 } from "lucide-react";
 
 import { AdminStoreProvider } from "./AdminStore";
@@ -45,6 +48,11 @@ type AdminShellProps = {
 export function AdminShell({ children, profile }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const visibleNav = adminNav.filter(
+    (item) =>
+      !item.managerOnly || profile.role === "admin" || profile.role === "owner",
+  );
 
   async function logout() {
     await fetch("/auth/signout", { method: "POST" });
@@ -55,9 +63,78 @@ export function AdminShell({ children, profile }: AdminShellProps) {
   return (
     <AdminStoreProvider>
       <main className="min-h-dvh bg-[#eef2f1] text-[#071f33]">
-        <div className="grid min-h-dvh lg:grid-cols-[280px_1fr]">
-          <aside className="border-b border-[#071f33]/10 bg-[#071f33] text-white lg:border-b-0 lg:border-r">
-            <div className="flex items-center justify-between gap-4 px-5 py-4 lg:block lg:px-6 lg:py-7">
+        <div className="lg:grid lg:min-h-dvh lg:grid-cols-[280px_1fr]">
+          <header className="sticky top-0 z-40 border-b border-white/10 bg-[#071f33] text-white shadow-lg lg:hidden">
+            <div className="flex h-16 items-center justify-between gap-3 px-4">
+              <Link
+                href="/admin/dashboard"
+                aria-label="Admin dashboard"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Image
+                  src="/manasa-logo.svg"
+                  alt="Manasa Book Center"
+                  width={205}
+                  height={64}
+                  className="h-10 w-auto"
+                />
+              </Link>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-[8px] bg-white/10 text-white transition hover:bg-white/16"
+                  aria-label="Logout"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen((current) => !current)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#ffd493] text-[#071f33]"
+                  aria-label="Toggle admin navigation"
+                >
+                  {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </button>
+              </div>
+            </div>
+
+            {menuOpen ? (
+              <nav className="grid gap-2 border-t border-white/10 px-4 py-4">
+                {visibleNav.map((item) => {
+                  const Icon = item.icon;
+                  const active = pathname === item.href;
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      className={`inline-flex h-11 items-center gap-3 rounded-[8px] px-4 text-sm font-black transition ${
+                        active
+                          ? "bg-[#ffd493] text-[#071f33]"
+                          : "bg-white/8 text-white/78 hover:bg-white/12 hover:text-white"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+                <div className="rounded-[8px] bg-white/8 p-3">
+                  <p className="truncate text-xs font-black text-[#ffd493]">
+                    {profile.fullName ?? profile.email ?? "Store user"}
+                  </p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-white/44">
+                    {profile.role}
+                  </p>
+                </div>
+              </nav>
+            ) : null}
+          </header>
+
+          <aside className="hidden bg-[#071f33] text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:border-r lg:border-[#071f33]/10">
+            <div className="px-6 py-7">
               <Link href="/admin/dashboard" aria-label="Admin dashboard">
                 <Image
                   src="/manasa-logo.svg"
@@ -67,25 +144,10 @@ export function AdminShell({ children, profile }: AdminShellProps) {
                   className="h-12 w-auto"
                 />
               </Link>
-              <button
-                type="button"
-                onClick={logout}
-                className="inline-flex h-10 items-center gap-2 rounded-[8px] bg-white/10 px-3 text-sm font-black text-white transition hover:bg-white/16 lg:hidden"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
             </div>
 
-            <nav className="flex gap-2 overflow-x-auto px-5 pb-4 lg:grid lg:gap-2 lg:px-4 lg:pb-0">
-              {adminNav
-                .filter(
-                  (item) =>
-                    !item.managerOnly ||
-                    profile.role === "admin" ||
-                    profile.role === "owner",
-                )
-                .map((item) => {
+            <nav className="grid gap-2 px-4">
+              {visibleNav.map((item) => {
                 const Icon = item.icon;
                 const active = pathname === item.href;
 
@@ -99,7 +161,7 @@ export function AdminShell({ children, profile }: AdminShellProps) {
                         : "text-white/72 hover:bg-white/10 hover:text-white"
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-4 w-4 shrink-0" />
                     {item.label}
                   </Link>
                 );
@@ -132,7 +194,9 @@ export function AdminShell({ children, profile }: AdminShellProps) {
             </div>
           </aside>
 
-          <section className="min-w-0 p-5 sm:p-7 lg:p-9">{children}</section>
+          <section className="min-w-0 overflow-x-hidden p-4 sm:p-6 lg:p-9">
+            {children}
+          </section>
         </div>
       </main>
     </AdminStoreProvider>

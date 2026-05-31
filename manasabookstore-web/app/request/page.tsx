@@ -1,9 +1,25 @@
 import { ClipboardList, MessageCircle } from "lucide-react";
 
 import { RequestForm } from "@/components/site/RequestForm";
+import { RequestedItemsBoard } from "@/components/site/RequestedItemsBoard";
+import { getPublicRequestedItemsFromSupabase } from "@/lib/supabase/public-requests";
 import { categories, site } from "@/lib/site-data";
 
-export default function RequestPage() {
+type RequestPageProps = {
+  searchParams: Promise<{ item?: string; category?: string }>;
+};
+
+export default async function RequestPage({ searchParams }: RequestPageProps) {
+  const [params, requestedItems] = await Promise.all([
+    searchParams,
+    getPublicRequestedItemsFromSupabase(),
+  ]);
+  const requestedCategory = categories.some(
+    (category) => category.slug === params.category,
+  )
+    ? params.category
+    : "";
+
   return (
     <main className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.78fr_1fr] lg:px-10 lg:py-14">
       <section>
@@ -35,9 +51,14 @@ export default function RequestPage() {
             Continue on WhatsApp
           </a>
         </div>
+        <RequestedItemsBoard items={requestedItems} />
       </section>
 
-      <RequestForm categories={categories} />
+      <RequestForm
+        categories={categories}
+        initialItem={params.item ?? ""}
+        initialCategory={requestedCategory}
+      />
     </main>
   );
 }

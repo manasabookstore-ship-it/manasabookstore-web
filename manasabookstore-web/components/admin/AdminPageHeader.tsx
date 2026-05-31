@@ -12,8 +12,8 @@ export function AdminPageHeader({
   action,
 }: AdminPageHeaderProps) {
   return (
-    <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-      <div>
+    <div className="flex min-w-0 flex-col justify-between gap-5 md:flex-row md:items-end">
+      <div className="min-w-0">
         <p className="text-sm font-black text-[#d86b13]">{eyebrow}</p>
         <h1 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
           {title}
@@ -22,7 +22,7 @@ export function AdminPageHeader({
           {description}
         </p>
       </div>
-      {action}
+      {action ? <div className="shrink-0">{action}</div> : null}
     </div>
   );
 }
