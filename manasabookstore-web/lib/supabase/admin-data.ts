@@ -73,6 +73,23 @@ export async function createProductInSupabase(
   return mapProduct(data);
 }
 
+export async function findProductByBarcodeInSupabase(barcode: string) {
+  const supabase = createSupabaseServiceClient();
+  const code = barcode.trim();
+
+  if (!supabase || !code) {
+    return null;
+  }
+
+  const { data } = await supabase
+    .from("products")
+    .select("*, categories(name)")
+    .eq("barcode", code)
+    .maybeSingle();
+
+  return data ? mapProduct(data) : null;
+}
+
 export async function createSaleInSupabase(
   items: SaleItem[],
   paymentMode: AdminSale["paymentMode"],

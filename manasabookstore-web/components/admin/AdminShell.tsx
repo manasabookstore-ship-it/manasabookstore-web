@@ -12,6 +12,7 @@ import {
   PlusCircle,
   ReceiptText,
   Settings,
+  UserPlus,
 } from "lucide-react";
 
 import { AdminStoreProvider } from "./AdminStore";
@@ -23,6 +24,12 @@ const adminNav = [
   { href: "/admin/orders", label: "Requests", icon: ClipboardList },
   { href: "/admin/sales", label: "Sales", icon: ReceiptText },
   { href: "/admin/reports", label: "Reports", icon: BarChart3 },
+  {
+    href: "/admin/register",
+    label: "Staff",
+    icon: UserPlus,
+    managerOnly: true,
+  },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
@@ -71,7 +78,14 @@ export function AdminShell({ children, profile }: AdminShellProps) {
             </div>
 
             <nav className="flex gap-2 overflow-x-auto px-5 pb-4 lg:grid lg:gap-2 lg:px-4 lg:pb-0">
-              {adminNav.map((item) => {
+              {adminNav
+                .filter(
+                  (item) =>
+                    !item.managerOnly ||
+                    profile.role === "admin" ||
+                    profile.role === "owner",
+                )
+                .map((item) => {
                 const Icon = item.icon;
                 const active = pathname === item.href;
 

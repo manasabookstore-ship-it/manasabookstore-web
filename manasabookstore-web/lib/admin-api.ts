@@ -1,4 +1,5 @@
 import { AdminProduct, AdminSale, SaleItem } from "./admin-data";
+import { BarcodeLookupResult } from "./barcode-lookup";
 
 export type AdminSnapshot = {
   products: AdminProduct[];
@@ -57,4 +58,20 @@ export async function createAdminSale(
   }
 
   return (await response.json()) as AdminSale;
+}
+
+export async function lookupAdminBarcode(
+  code: string,
+): Promise<BarcodeLookupResult | null> {
+  const params = new URLSearchParams({ code });
+  const response = await fetch(`/api/admin/barcode/lookup?${params.toString()}`, {
+    headers: headers(),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return (await response.json()) as BarcodeLookupResult;
 }

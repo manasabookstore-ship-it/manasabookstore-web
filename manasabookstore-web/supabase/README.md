@@ -45,6 +45,15 @@ The app includes `/auth/github` to start the OAuth flow and `/auth/callback` to 
 
 After your first GitHub sign-in, run `supabase/promote-admin.sql` with your email to promote your profile to `owner`.
 
+## Email Login And Staff Registration
+
+Admin login supports both GitHub OAuth and Supabase email/password. Enable the
+email provider in Supabase Auth if it is disabled in your project.
+
+Owners and admins can create staff accounts from `/admin/register`. Staff created
+there can sign in from `/admin` using email and password. Public self-registration
+does not assign staff access.
+
 ## Roles
 
 Profiles use the `user_role` enum:
@@ -78,3 +87,16 @@ and payment toggle fields.
 Future PhonePe Payment Gateway work should replace the current UPI intent helper
 with official merchant order creation, callback handling, and server-side payment
 verification.
+
+## Barcode Lookup
+
+Admin barcode lookup first checks the store inventory in Supabase. If the code is
+new, it tries free public sources in this order:
+
+- Open Library for ISBN/book barcodes
+- Google Books for ISBN fallback
+- Open Food Facts for packaged food and daily essentials
+- UPCitemdb trial lookup for general UPC/EAN fallback
+
+External lookups only create a draft suggestion. Owners should confirm product
+name, category, price, stock, and low-stock threshold before saving.

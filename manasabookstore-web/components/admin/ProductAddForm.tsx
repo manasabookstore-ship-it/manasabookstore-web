@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
+import { lookupAdminBarcode } from "@/lib/admin-api";
 import { categories } from "@/lib/site-data";
+import { BarcodeScannerButton } from "./BarcodeScannerButton";
 import { AdminPageHeader } from "./AdminPageHeader";
 import { useAdminStore } from "./AdminStore";
 
@@ -11,6 +13,8 @@ export function ProductAddForm() {
   const router = useRouter();
   const { addProduct } = useAdminStore();
   const [error, setError] = useState("");
+  const [lookupMessage, setLookupMessage] = useState("");
+  const [lookingUp, setLookingUp] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -24,6 +28,58 @@ export function ProductAddForm() {
 
   function updateField(name: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [name]: value }));
+  }
+
+  async function lookupBarcode(code = form.barcode) {
+    const barcode = code.trim();
+    setError("");
+    setLookupMessage("");
+
+    if (!barcode) {
+      setError("Enter or scan a barcode first.");
+      return;
+    }
+
+    setLookingUp(true);
+    const result = await lookupAdminBarcode(barcode);
+    setLookingUp(false);
+
+    if (!result) {
+      setLookupMessage("Lookup failed. You can still enter product details manually.");
+      return;
+    }
+
+    if (result.product) {
+      setForm({
+        name: result.product.name,
+        category: result.product.category,
+        sku: result.product.sku,
+        barcode: result.product.barcode,
+        stock: String(result.product.stock),
+        price: String(result.product.price),
+        lowStock: String(result.product.lowStock),
+      });
+      setLookupMessage("This barcode already exists in inventory.");
+      return;
+    }
+
+    if (result.suggestion) {
+      setForm((current) => ({
+        ...current,
+        name: result.suggestion?.name ?? current.name,
+        category: result.suggestion?.category ?? current.category,
+        sku: result.suggestion?.sku ?? current.sku,
+        barcode: result.suggestion?.barcode ?? barcode,
+        stock: String(result.suggestion?.stock ?? current.stock),
+        price: String(result.suggestion?.price ?? current.price),
+        lowStock: String(result.suggestion?.lowStock ?? current.lowStock),
+      }));
+      setLookupMessage(
+        result.found
+          ? `Drafted from ${result.source}. Please confirm price and stock.`
+          : "No public match found. Barcode and SKU are ready for manual entry.",
+      );
+    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -64,7 +120,7 @@ export function ProductAddForm() {
       <AdminPageHeader
         eyebrow="Add product"
         title="Create a local inventory item."
-        description="This form is ready for future backend persistence. For now it saves into local browser storage."
+        description="Scan or type a barcode, then confirm the product details before saving."
       />
 
       <form
@@ -101,11 +157,25 @@ export function ProductAddForm() {
         </label>
         <label className="block text-sm font-black">
           Barcode
-          <input
-            value={form.barcode}
-            onChange={(event) => updateField("barcode", event.target.value)}
-            className="mt-2 h-12 w-full rounded-[8px] border border-[#071f33]/12 px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
-          />
+          <div className="mt-2 flex gap-2">
+            <input
+              value={form.barcode}
+              onChange={(event) => updateField("barcode", event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  void lookupBarcode();
+                }
+              }}
+              className="h-12 min-w-0 flex-1 rounded-[8px] border border-[#071f33]/12 px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
+            />
+            <BarcodeScannerButton
+              onDetected={(barcode) => {
+                updateField("barcode", barcode);
+                void lookupBarcode(barcode);
+              }}
+            />
+          </div>
         </label>
         <label className="block text-sm font-black">
           Stock
@@ -142,6 +212,19 @@ export function ProductAddForm() {
             {error}
           </p>
         ) : null}
+        {lookupMessage ? (
+          <p className="rounded-[8px] bg-[#f7faf9] px-4 py-3 text-sm font-bold text-[#071f33]/70 sm:col-span-2">
+            {lookupMessage}
+          </p>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => lookupBarcode()}
+          disabled={lookingUp}
+          className="h-12 rounded-[8px] bg-[#071f33] text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
+        >
+          {lookingUp ? "Looking up..." : "Lookup barcode"}
+        </button>
         <button
           type="submit"
           disabled={saving}
