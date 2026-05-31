@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 import type { Product } from "@/lib/site-data";
+import { AddToCartButton } from "./AddToCartButton";
 import { AvailabilityBadge } from "./AvailabilityBadge";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -61,6 +62,7 @@ export function ProductCard({ product }: { product: Product }) {
           View details
           <ArrowRight className="h-4 w-4" />
         </Link>
+        <AddToCartButton product={product} />
       </div>
     </article>
   );
