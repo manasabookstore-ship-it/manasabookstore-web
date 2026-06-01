@@ -27,6 +27,8 @@ export type CommerceSettings = {
   onlineUpiPaymentEnabled: boolean;
   payAtStoreEnabled: boolean;
   pickupPaymentEnabled: boolean;
+  homepageNotice: string;
+  homepageNoticeEnabled: boolean;
 };
 
 export const defaultCommerceSettings: CommerceSettings = {
@@ -38,6 +40,8 @@ export const defaultCommerceSettings: CommerceSettings = {
   onlineUpiPaymentEnabled: false,
   payAtStoreEnabled: true,
   pickupPaymentEnabled: true,
+  homepageNotice: "",
+  homepageNoticeEnabled: false,
 };
 
 export function parseProductPrice(price: string) {

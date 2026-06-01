@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { createProductInSupabase } from "@/lib/supabase/admin-data";
+import {
+  createProductInSupabase,
+  updateProductInSupabase,
+} from "@/lib/supabase/admin-data";
 import { guardAdminRequest } from "../guard";
 
 export async function POST(request: Request) {
@@ -21,4 +24,24 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json(created);
+}
+
+export async function PATCH(request: Request) {
+  const blocked = await guardAdminRequest();
+
+  if (blocked) {
+    return blocked;
+  }
+
+  const product = await request.json();
+  const updated = await updateProductInSupabase(product);
+
+  if (!updated) {
+    return NextResponse.json(
+      { error: "Product could not be updated" },
+      { status: 500 },
+    );
+  }
+
+  return NextResponse.json(updated);
 }

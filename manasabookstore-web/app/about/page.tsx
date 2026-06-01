@@ -1,24 +1,25 @@
 import { HeartHandshake, MapPin, PackageCheck } from "lucide-react";
 
+import { RetailPageHeader } from "@/components/site/RetailPageHeader";
 import { site } from "@/lib/site-data";
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
-      <section className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div>
-          <p className="text-sm font-black text-[#d86b13]">About</p>
-          <h1 className="mt-2 text-4xl font-black leading-tight sm:text-5xl">
-            A local store for students and everyday essentials.
-          </h1>
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <RetailPageHeader
+        eyebrow="About Manasa"
+        title="A trusted Chimakurthy store for students and daily essentials."
+        description="Manasa Book Center serves books, stationery, school essentials, project materials, engineering tools, hostel basics, personal care items and gifts."
+        icon={<HeartHandshake className="h-6 w-6" />}
+      >
+        <div className="grid gap-3 sm:grid-cols-2">
+          {["Books", "Stationery", "Essentials", "Gifts"].map((item) => (
+            <div key={item} className="rounded-[8px] bg-white p-4 shadow-sm">
+              <p className="text-sm font-black text-[#071f33]">{item}</p>
+            </div>
+          ))}
         </div>
-        <p className="text-base leading-8 text-[#071f33]/68">
-          Manasa Book Center serves Chimakurthy with books, stationery, school
-          essentials, project materials, engineering tools, hostel basics,
-          personal care items and gifts. This website foundation is designed to
-          make the store easier to discover, browse and contact.
-        </p>
-      </section>
+      </RetailPageHeader>
       <section className="mt-10 grid gap-4 md:grid-cols-3">
         {[
           {

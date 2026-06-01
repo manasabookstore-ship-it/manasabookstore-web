@@ -23,20 +23,42 @@ export function AdminLogin({ error }: AdminLoginProps) {
               : "";
 
   return (
-    <main className="grid min-h-dvh place-items-center bg-[#071f33] p-5 text-[#071f33]">
-      <section
-        className="w-full max-w-md rounded-[8px] bg-[#fbf7ef] p-6 shadow-2xl sm:p-8"
-      >
+    <main className="grid min-h-dvh overflow-hidden bg-[#051b15] p-4 text-[#071f33] sm:place-items-center sm:p-5">
+      <div className="pointer-events-none fixed inset-0 opacity-24">
         <Image
-          src="/manasa-logo.svg"
-          alt="Manasa Book Center"
-          width={205}
-          height={64}
+          src="/generated/manasa-hero-still-life.png"
+          alt=""
+          fill
           priority
-          className="h-14 w-auto"
+          sizes="100vw"
+          className="object-cover"
         />
+        <div className="absolute inset-0 bg-[#051b15]/70" />
+      </div>
+      <section
+        className="relative mx-auto mt-20 w-full max-w-[18rem] overflow-hidden rounded-[8px] border border-[#c49345]/20 bg-[#fbf7ef] p-5 shadow-2xl sm:mt-0 sm:max-w-md sm:p-8"
+      >
+        <div className="pointer-events-none absolute -right-14 -top-20 h-44 w-44 rounded-full bg-[#c49345]/12" />
+        <div className="relative inline-flex min-w-0 items-center gap-3">
+          <Image
+            src="/manasa-logo-concept-mark.svg"
+            alt=""
+            width={58}
+            height={58}
+            priority
+            className="h-12 w-12"
+          />
+          <div className="min-w-0">
+            <p className="font-serif text-xl uppercase leading-none tracking-[0.16em] text-[#071f33] sm:text-2xl sm:tracking-[0.2em]">
+              Manasa
+            </p>
+            <p className="mt-1 text-[11px] font-black uppercase tracking-[0.26em] text-[#8a5a12]">
+              Admin Studio
+            </p>
+          </div>
+        </div>
         <div className="mt-8 flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#f5ead7] text-[#d86b13]">
+          <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#f5ead7] text-[#8a5a12]">
             <LockKeyhole className="h-5 w-5" />
           </span>
           <div>
@@ -62,7 +84,7 @@ export function AdminLogin({ error }: AdminLoginProps) {
               type="email"
               autoComplete="email"
               required
-              className="h-12 rounded-[8px] border border-[#071f33]/12 bg-white px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
+              className="h-12 w-full min-w-0 rounded-[8px] border border-[#071f33]/12 bg-white px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
             />
           </label>
           <label className="grid gap-2 text-sm font-black">
@@ -72,7 +94,7 @@ export function AdminLogin({ error }: AdminLoginProps) {
               type="password"
               autoComplete="current-password"
               required
-              className="h-12 rounded-[8px] border border-[#071f33]/12 bg-white px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
+              className="h-12 w-full min-w-0 rounded-[8px] border border-[#071f33]/12 bg-white px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
             />
           </label>
           <button

@@ -1,16 +1,12 @@
-<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="190" height="190" viewBox="0 0 190 190" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="green" x1="273" y1="188" x2="716" y2="803" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#128A61"/>
-      <stop offset="1" stop-color="#07523D"/>
+    <linearGradient id="gold" x1="33" y1="30" x2="158" y2="164" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D6A95E"/>
+      <stop offset="0.48" stop-color="#9B661B"/>
+      <stop offset="1" stop-color="#E8C47B"/>
     </linearGradient>
   </defs>
-  <rect width="1024" height="1024" rx="224" fill="#071F33"/>
-  <rect x="156" y="156" width="712" height="712" rx="168" fill="#FFF7E8"/>
-  <path d="M314 325C314 262.592 364.592 212 427 212H664C713.706 212 754 252.294 754 302V768.872C754 799.58 720.927 818.977 694.102 804.015L555.617 726.784C528.661 711.749 495.339 711.749 468.383 726.784L329.898 804.015C303.073 818.977 270 799.58 270 768.872V369C270 344.699 289.699 325 314 325Z" fill="url(#green)"/>
-  <path d="M314 325V287C314 245.579 347.579 212 389 212H664C713.706 212 754 252.294 754 302V332H326C319.373 332 314 331.627 314 325Z" fill="#FFD493"/>
-  <path d="M383 441H641" stroke="#FFF7E8" stroke-width="60" stroke-linecap="round"/>
-  <path d="M512 444V634" stroke="#FFD493" stroke-width="60" stroke-linecap="round"/>
-  <path d="M404 637L512 441L620 637" stroke="#FFF7E8" stroke-width="60" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="741" cy="229" r="57" fill="#D86B13"/>
+  <path d="M95 8L110.7 23.8L132.2 18.2L138.1 39.7L159.6 45.4L154 66.9L169.8 82.6L154 98.3L159.6 119.8L138.1 125.7L132.2 147.2L110.7 141.6L95 157.4L79.3 141.6L57.8 147.2L51.9 125.7L30.4 119.8L36 98.3L20.2 82.6L36 66.9L30.4 45.4L51.9 39.7L57.8 18.2L79.3 23.8L95 8Z" fill="#FBF7EF" stroke="url(#gold)" stroke-width="4"/>
+  <circle cx="95" cy="82.5" r="54" stroke="#A8752A" stroke-width="2"/>
+  <path d="M63 114H76L81.7 60.5L101.8 111.2H107.3L127.8 60.2L133.1 114H146V111.2C139.9 110.6 139.1 109.7 138.4 103L133.7 56C133.1 49.9 134 48.8 140.2 48.1V45.3H118.3L101.8 88.3L85.1 45.3H63.5V48.1C70.1 48.8 70.7 49.9 70.1 56.5L65.8 102.5C65.1 109.3 64.1 110.5 63 111.2V114Z" fill="#8A5A12"/>
 </svg>

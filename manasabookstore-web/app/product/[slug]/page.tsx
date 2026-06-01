@@ -13,6 +13,7 @@ import {
   products,
   site,
 } from "@/lib/site-data";
+import { getPublicProductBySlugFromSupabase } from "@/lib/supabase/public-products";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -24,7 +25,7 @@ export function generateStaticParams() {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = getProduct(slug) ?? await getPublicProductBySlugFromSupabase(slug);
 
   if (!product) {
     notFound();
@@ -39,7 +40,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const related = relatedProducts.length > 0 ? relatedProducts : fallbackRelated;
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <Link
         href="/products"
         className="inline-flex items-center gap-2 text-sm font-black text-[#0b6b4a]"
@@ -48,14 +49,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
         All products
       </Link>
 
-      <section className="mt-6 grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
-        <div className="rounded-[8px] border border-[#071f33]/10 bg-white p-5 shadow-sm">
-          <div className="grid aspect-square place-items-center rounded-[8px] bg-[#fbf7ef]">
-            <div className="grid h-40 w-40 place-items-center rounded-full bg-[#0b6b4a]/10 text-[#0b6b4a]">
-              <PackageCheck className="h-16 w-16" />
-            </div>
+      <section className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="overflow-hidden rounded-[8px] border border-[#071f33]/10 bg-white shadow-sm">
+          <div className="grid aspect-square place-items-center overflow-hidden rounded-[8px] bg-[#fbf7ef]">
+            {product.imageUrl ? (
+              <div
+                className="h-full w-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${product.imageUrl})` }}
+                role="img"
+                aria-label={product.name}
+              />
+            ) : (
+              <div className="grid h-40 w-40 place-items-center rounded-full bg-[#0b6b4a]/10 text-[#0b6b4a]">
+                <PackageCheck className="h-16 w-16" />
+              </div>
+            )}
           </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-px bg-[#071f33]/10 sm:grid-cols-2">
             <div className="rounded-[8px] bg-[#fbf7ef] p-4">
               <p className="text-xs font-black uppercase tracking-wide text-[#071f33]/50">
                 Category
@@ -73,7 +83,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        <div className="rounded-[8px] bg-white p-6 shadow-sm sm:p-8">
+        <div className="rounded-[8px] border border-[#071f33]/10 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-wrap items-center gap-2">
             <AvailabilityBadge availability={product.availability} />
             {product.featured ? (
@@ -104,7 +114,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </span>
             ))}
           </div>
-          <div className="mt-8 rounded-[8px] bg-[#fbf7ef] p-4">
+          <div className="mt-8 rounded-[8px] border border-[#071f33]/10 bg-[#fbf7ef] p-4">
             <p className="text-sm font-black text-[#071f33]">Availability note</p>
             <p className="mt-1 text-sm leading-6 text-[#071f33]/68">
               {product.stockNote}

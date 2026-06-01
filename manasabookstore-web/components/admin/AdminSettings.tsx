@@ -82,6 +82,23 @@ export function AdminSettings() {
           </p>
           <div className="mt-5 grid gap-3">
             <label className="grid gap-2 rounded-[8px] bg-[#f7faf9] p-4 text-sm font-black">
+              Homepage notice
+              <textarea
+                value={settings.homepageNotice}
+                onChange={(event) =>
+                  updateTextSetting("homepageNotice", event.target.value)
+                }
+                onBlur={() => saveSettings()}
+                placeholder="Example: School reopening books available this week."
+                className="min-h-24 rounded-[8px] border border-[#071f33]/12 bg-white p-3 text-sm font-bold outline-none"
+              />
+            </label>
+            <Toggle
+              label="Show homepage notice"
+              checked={settings.homepageNoticeEnabled}
+              onChange={(value) => updateSetting("homepageNoticeEnabled", value)}
+            />
+            <label className="grid gap-2 rounded-[8px] bg-[#f7faf9] p-4 text-sm font-black">
               PhonePe UPI ID
               <input
                 value={settings.phonePeUpiId}

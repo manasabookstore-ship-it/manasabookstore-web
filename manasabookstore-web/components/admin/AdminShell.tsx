@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -15,6 +14,7 @@ import {
   ReceiptText,
   Settings,
   UserPlus,
+  UsersRound,
   X,
 } from "lucide-react";
 
@@ -31,6 +31,12 @@ const adminNav = [
     href: "/admin/register",
     label: "Staff",
     icon: UserPlus,
+    managerOnly: true,
+  },
+  {
+    href: "/admin/users",
+    label: "Users",
+    icon: UsersRound,
     managerOnly: true,
   },
   { href: "/admin/settings", label: "Settings", icon: Settings },
@@ -62,22 +68,17 @@ export function AdminShell({ children, profile }: AdminShellProps) {
 
   return (
     <AdminStoreProvider>
-      <main className="min-h-dvh bg-[#eef2f1] text-[#071f33]">
+      <main className="min-h-dvh bg-[#fbf7ef] text-[#071f33]">
         <div className="lg:grid lg:min-h-dvh lg:grid-cols-[280px_1fr]">
-          <header className="sticky top-0 z-40 border-b border-white/10 bg-[#071f33] text-white shadow-lg lg:hidden">
-            <div className="flex h-16 items-center justify-between gap-3 px-4">
+          <header className="sticky top-0 z-40 border-b border-[#c49345]/18 bg-[#051b15] text-white shadow-lg lg:hidden">
+            <div className="flex min-h-16 items-center justify-between gap-3 px-4 py-3">
               <Link
                 href="/admin/dashboard"
                 aria-label="Admin dashboard"
                 onClick={() => setMenuOpen(false)}
+                className="inline-flex min-w-0 items-center gap-3"
               >
-                <Image
-                  src="/manasa-logo.svg"
-                  alt="Manasa Book Center"
-                  width={205}
-                  height={64}
-                  className="h-10 w-auto"
-                />
+                <AdminBrand compact />
               </Link>
               <div className="flex items-center gap-2">
                 <button
@@ -91,7 +92,7 @@ export function AdminShell({ children, profile }: AdminShellProps) {
                 <button
                   type="button"
                   onClick={() => setMenuOpen((current) => !current)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#ffd493] text-[#071f33]"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#c49345] text-[#051b15]"
                   aria-label="Toggle admin navigation"
                 >
                   {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -133,16 +134,10 @@ export function AdminShell({ children, profile }: AdminShellProps) {
             ) : null}
           </header>
 
-          <aside className="hidden bg-[#071f33] text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:border-r lg:border-[#071f33]/10">
+          <aside className="hidden bg-[#051b15] text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:border-r lg:border-[#c49345]/10">
             <div className="px-6 py-7">
-              <Link href="/admin/dashboard" aria-label="Admin dashboard">
-                <Image
-                  src="/manasa-logo.svg"
-                  alt="Manasa Book Center"
-                  width={205}
-                  height={64}
-                  className="h-12 w-auto"
-                />
+              <Link href="/admin/dashboard" aria-label="Admin dashboard" className="inline-flex">
+                <AdminBrand />
               </Link>
             </div>
 
@@ -157,7 +152,7 @@ export function AdminShell({ children, profile }: AdminShellProps) {
                     href={item.href}
                     className={`inline-flex h-11 shrink-0 items-center gap-3 rounded-[8px] px-4 text-sm font-black transition ${
                       active
-                        ? "bg-[#ffd493] text-[#071f33]"
+                        ? "bg-[#c49345] text-[#051b15]"
                         : "text-white/72 hover:bg-white/10 hover:text-white"
                     }`}
                   >
@@ -177,7 +172,7 @@ export function AdminShell({ children, profile }: AdminShellProps) {
                 <LogOut className="h-4 w-4" />
                 Logout
               </button>
-              <div className="mt-6 hidden rounded-[8px] bg-white/8 p-4 lg:block">
+              <div className="mt-6 hidden rounded-[8px] border border-[#c49345]/15 bg-white/[0.06] p-4 lg:block">
                 <p className="text-xs font-black uppercase tracking-wide text-[#ffd493]">
                   Signed in
                 </p>
@@ -195,10 +190,28 @@ export function AdminShell({ children, profile }: AdminShellProps) {
           </aside>
 
           <section className="min-w-0 overflow-x-hidden p-4 sm:p-6 lg:p-9">
-            {children}
+            <div className="mx-auto max-w-[1500px]">{children}</div>
           </section>
         </div>
       </main>
     </AdminStoreProvider>
+  );
+}
+
+function AdminBrand({ compact = false }: { compact?: boolean }) {
+  return (
+    <span className="inline-flex min-w-0 items-center gap-3">
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#c49345]/70 font-serif text-xl text-[#f3d08d]">
+        M
+      </span>
+      <span className={compact ? "min-w-0" : ""}>
+        <span className="block truncate font-serif text-xl uppercase leading-none tracking-[0.22em] text-white">
+          Manasa
+        </span>
+        <span className="mt-1 block truncate text-[10px] font-black uppercase leading-none tracking-[0.26em] text-[#c49345]">
+          Admin Studio
+        </span>
+      </span>
+    </span>
   );
 }

@@ -7,15 +7,24 @@ import { AvailabilityBadge } from "./AvailabilityBadge";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <article className="flex h-full flex-col rounded-[8px] border border-[#071f33]/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl">
-      <div className="rounded-[8px] bg-[#fbf7ef] p-4">
-        <div className="flex aspect-[4/3] items-center justify-center rounded-[8px] border border-[#071f33]/10 bg-white">
-          <div className="grid h-20 w-20 place-items-center rounded-full bg-[#0b6b4a]/10 text-[#0b6b4a]">
-            <Sparkles className="h-8 w-8" />
-          </div>
+    <article className="group flex h-full flex-col overflow-hidden rounded-[8px] border border-[#071f33]/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-[#0b6b4a]/30 hover:shadow-xl">
+      <div className="bg-[#fbf7ef] p-4">
+        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[8px] border border-[#071f33]/10 bg-white">
+          {product.imageUrl ? (
+            <div
+              role="img"
+              aria-label={product.name}
+              className="absolute inset-0 bg-cover bg-center transition duration-300 group-hover:scale-105"
+              style={{ backgroundImage: `url(${product.imageUrl})` }}
+            />
+          ) : (
+            <div className="grid h-20 w-20 place-items-center rounded-full bg-[#0b6b4a]/10 text-[#0b6b4a]">
+              <Sparkles className="h-8 w-8" />
+            </div>
+          )}
         </div>
       </div>
-      <div className="mt-5 flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col p-5">
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <AvailabilityBadge availability={product.availability} />
           {product.featured ? (

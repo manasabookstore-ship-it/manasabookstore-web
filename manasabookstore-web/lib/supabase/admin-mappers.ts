@@ -36,6 +36,7 @@ export function mapProduct(row: ProductRow): AdminProduct {
     stock: row.stock,
     price: Number(row.price),
     lowStock: row.low_stock,
+    imageUrl: row.image_url ?? "",
   };
 }
 

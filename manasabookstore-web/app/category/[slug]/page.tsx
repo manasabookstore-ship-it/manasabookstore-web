@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { CategoryCard } from "@/components/site/CategoryCard";
+import { iconMap } from "@/components/site/icon-map";
 import { ProductBrowser } from "@/components/site/ProductBrowser";
+import { RetailPageHeader } from "@/components/site/RetailPageHeader";
 import {
   categories,
   getCategory,
@@ -30,9 +32,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const relatedCategories = categories
     .filter((item) => item.slug !== category.slug)
     .slice(0, 3);
+  const Icon = iconMap[category.icon];
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <Link
         href="/categories"
         className="inline-flex items-center gap-2 text-sm font-black text-[#0b6b4a]"
@@ -41,23 +44,40 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         All categories
       </Link>
 
-      <section className="mt-6 rounded-[8px] bg-[#071f33] p-6 text-white sm:p-8">
-        <p className="text-sm font-black text-[#ffd493]">Category detail</p>
-        <h1 className="mt-2 text-4xl font-black leading-tight sm:text-5xl">
-          {category.name}
-        </h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-white/72">
-          {category.description}
-        </p>
-        <div className="mt-6 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/12 px-4 py-2 text-xs font-black uppercase tracking-wide text-white/78">
-            {categoryProducts.length} products
-          </span>
-          <span className="rounded-full bg-white/12 px-4 py-2 text-xs font-black uppercase tracking-wide text-white/78">
-            Search within category
-          </span>
-        </div>
-      </section>
+      <div className="mt-6">
+        <RetailPageHeader
+          eyebrow="Category"
+          title={category.name}
+          description={category.description}
+          icon={<Icon className="h-6 w-6" />}
+          actions={
+            <Link
+              href={`/request?category=${category.slug}`}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-[8px] bg-[#ffd493] px-5 text-sm font-black text-[#071f33]"
+            >
+              Request in this category
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          }
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-[8px] bg-white p-5 shadow-sm">
+              <p className="text-3xl font-black text-[#0b6b4a]">
+                {categoryProducts.length}
+              </p>
+              <p className="mt-1 text-sm font-bold text-[#071f33]/62">
+                listed products
+              </p>
+            </div>
+            <div className="rounded-[8px] bg-white p-5 shadow-sm">
+              <p className="text-3xl font-black text-[#d86b13]">Fast</p>
+              <p className="mt-1 text-sm font-bold text-[#071f33]/62">
+                search inside category
+              </p>
+            </div>
+          </div>
+        </RetailPageHeader>
+      </div>
 
       <div className="mt-8">
         <ProductBrowser

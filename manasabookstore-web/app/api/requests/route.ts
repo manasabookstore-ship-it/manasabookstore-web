@@ -93,3 +93,42 @@ export async function POST(request: Request) {
     ownerNotificationConfigured: ownerNotification.configured,
   });
 }
+
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const phone = url.searchParams.get("phone")?.replace(/\D/g, "") ?? "";
+  const requestId = url.searchParams.get("id")?.trim() ?? "";
+
+  if (phone.length < 10) {
+    return NextResponse.json({ error: "Phone is required" }, { status: 400 });
+  }
+
+  const supabase = createSupabaseServiceClient();
+
+  if (!supabase) {
+    return NextResponse.json([]);
+  }
+
+  let query = supabase
+    .from("orders")
+    .select("id, status, customer_note, created_at")
+    .eq("source", "website")
+    .ilike("customer_phone", `%${phone.slice(-10)}%`)
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (requestId) {
+    query = query.eq("id", requestId);
+  }
+
+  const { data } = await query;
+
+  return NextResponse.json(
+    (data ?? []).map((order) => ({
+      id: order.id,
+      status: order.status,
+      customerNote: order.customer_note,
+      createdAt: order.created_at,
+    })),
+  );
+}

@@ -7,6 +7,7 @@ export type AdminProduct = {
   stock: number;
   price: number;
   lowStock: number;
+  imageUrl?: string;
 };
 
 export type SaleItem = {

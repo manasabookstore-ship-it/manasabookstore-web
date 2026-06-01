@@ -34,6 +34,8 @@ export async function PATCH(request: Request) {
     onlineUpiPaymentEnabled: Boolean(body.onlineUpiPaymentEnabled),
     payAtStoreEnabled: Boolean(body.payAtStoreEnabled),
     pickupPaymentEnabled: Boolean(body.pickupPaymentEnabled),
+    homepageNotice: body.homepageNotice ?? "",
+    homepageNoticeEnabled: Boolean(body.homepageNoticeEnabled),
   });
 
   if (!updated) {

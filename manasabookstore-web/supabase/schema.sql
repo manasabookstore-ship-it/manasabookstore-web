@@ -59,6 +59,7 @@ create table public.products (
   is_featured boolean not null default false,
   is_active boolean not null default true,
   metadata jsonb not null default '{}'::jsonb,
+  image_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -143,6 +144,8 @@ create table public.store_settings (
   online_upi_payment_enabled boolean not null default false,
   pay_at_store_enabled boolean not null default true,
   pickup_payment_enabled boolean not null default true,
+  homepage_notice text,
+  homepage_notice_enabled boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -330,7 +333,9 @@ insert into public.store_settings (
   phonepe_merchant_name,
   online_upi_payment_enabled,
   pay_at_store_enabled,
-  pickup_payment_enabled
+  pickup_payment_enabled,
+  homepage_notice,
+  homepage_notice_enabled
 )
 values (
   'Manasa Book Center',
@@ -345,5 +350,7 @@ values (
   'Manasa Book Center',
   false,
   true,
+  false,
+  null,
   false
 );

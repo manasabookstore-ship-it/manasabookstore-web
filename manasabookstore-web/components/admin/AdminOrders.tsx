@@ -1,6 +1,7 @@
 "use client";
 
 import { ClipboardList, MessageCircle } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { AdminOrder, AdminOrderStatus } from "@/lib/admin-data";
@@ -47,6 +48,14 @@ function whatsappForOrder(order: AdminOrder) {
   const fallbackPhone = site.phoneHref.replace(/\D/g, "");
 
   return `https://wa.me/${phone || fallbackPhone}?text=${encodeURIComponent(message)}`;
+}
+
+function valueFromNote(note: string, label: string) {
+  const line = note
+    .split("\n")
+    .find((entry) => entry.toLowerCase().startsWith(`${label.toLowerCase()}:`));
+
+  return line?.split(":").slice(1).join(":").trim() ?? "";
 }
 
 export function AdminOrders() {
@@ -112,6 +121,15 @@ export function AdminOrders() {
           ) : null}
 
           {orders.map((order) => (
+            (() => {
+              const requestedItem = valueFromNote(order.customerNote, "Requested item");
+              const category = valueFromNote(order.customerNote, "Category");
+              const params = new URLSearchParams({
+                item: requestedItem,
+                category,
+              });
+
+              return (
             <article
               key={order.id}
               className="grid gap-4 rounded-[8px] border border-[#071f33]/10 bg-[#fbf7ef] p-4 lg:grid-cols-[1fr_auto]"
@@ -158,8 +176,18 @@ export function AdminOrders() {
                   <MessageCircle className="h-4 w-4" />
                   WhatsApp
                 </a>
+                {requestedItem ? (
+                  <Link
+                    href={`/admin/inventory/add?${params.toString()}`}
+                    className="inline-flex h-11 items-center justify-center rounded-[8px] bg-[#071f33] px-4 text-sm font-black text-white"
+                  >
+                    Convert to product
+                  </Link>
+                ) : null}
               </div>
             </article>
+              );
+            })()
           ))}
         </div>
       </div>

@@ -9,12 +9,14 @@ export function CartView() {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
 
   return (
-    <main className="mx-auto max-w-5xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
-      <div className="flex items-center gap-3">
-        <ShoppingBag className="h-8 w-8 text-[#0b6b4a]" />
-        <div>
-          <p className="text-sm font-black text-[#d86b13]">Cart</p>
-          <h1 className="text-4xl font-black">Your items</h1>
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <div className="rounded-[8px] bg-[#071f33] p-6 text-white shadow-sm sm:p-8">
+        <div className="flex items-center gap-3">
+          <ShoppingBag className="h-8 w-8 text-[#ffd493]" />
+          <div>
+            <p className="text-sm font-black text-[#ffd493]">Cart</p>
+            <h1 className="text-4xl font-black">Your items</h1>
+          </div>
         </div>
       </div>
 

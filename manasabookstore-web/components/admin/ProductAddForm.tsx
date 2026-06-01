@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 import { lookupAdminBarcode } from "@/lib/admin-api";
@@ -11,19 +11,31 @@ import { useAdminStore } from "./AdminStore";
 
 export function ProductAddForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialItem = searchParams.get("item") ?? "";
+  const initialCategoryParam = searchParams.get("category") ?? "";
+  const initialCategory =
+    categories.find(
+      (category) =>
+        category.slug === initialCategoryParam ||
+        category.name.toLowerCase() === initialCategoryParam.toLowerCase(),
+    )?.name ?? "";
   const { addProduct } = useAdminStore();
   const [error, setError] = useState("");
   const [lookupMessage, setLookupMessage] = useState("");
   const [lookingUp, setLookingUp] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    name: "",
-    category: categories[0]?.name ?? "Books",
-    sku: "",
+    name: initialItem,
+    category: initialCategory || categories[0]?.name || "Books",
+    sku: initialItem
+      ? `REQ-${initialItem.replace(/[^a-z0-9]+/gi, "-").slice(0, 18).toUpperCase()}`
+      : "",
     barcode: "",
     stock: "0",
     price: "0",
     lowStock: "5",
+    imageUrl: "",
   });
 
   function updateField(name: keyof typeof form, value: string) {
@@ -58,6 +70,7 @@ export function ProductAddForm() {
         stock: String(result.product.stock),
         price: String(result.product.price),
         lowStock: String(result.product.lowStock),
+        imageUrl: result.product.imageUrl ?? "",
       });
       setLookupMessage("This barcode already exists in inventory.");
       return;
@@ -111,8 +124,21 @@ export function ProductAddForm() {
       stock,
       price,
       lowStock,
+      imageUrl: form.imageUrl.trim(),
     });
     router.push("/admin/inventory");
+  }
+
+  function loadImage(file: File | undefined) {
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      updateField("imageUrl", String(reader.result ?? ""));
+    };
+    reader.readAsDataURL(file);
   }
 
   return (
@@ -207,6 +233,29 @@ export function ProductAddForm() {
             className="mt-2 h-12 w-full rounded-[8px] border border-[#071f33]/12 px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
           />
         </label>
+        <label className="block text-sm font-black sm:col-span-2">
+          Product photo
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(event) => loadImage(event.target.files?.[0])}
+            className="mt-2 block w-full rounded-[8px] border border-[#071f33]/12 bg-white px-4 py-3 text-sm font-bold outline-none focus:border-[#0b6b4a]"
+          />
+          <input
+            value={form.imageUrl}
+            onChange={(event) => updateField("imageUrl", event.target.value)}
+            placeholder="Or paste image URL"
+            className="mt-2 h-12 w-full rounded-[8px] border border-[#071f33]/12 px-4 text-sm font-bold outline-none focus:border-[#0b6b4a]"
+          />
+        </label>
+        {form.imageUrl ? (
+          <div
+            className="aspect-video rounded-[8px] border border-[#071f33]/10 bg-cover bg-center sm:col-span-2"
+            style={{ backgroundImage: `url(${form.imageUrl})` }}
+            role="img"
+            aria-label="Product preview"
+          />
+        ) : null}
         {error ? (
           <p className="rounded-[8px] bg-red-50 px-4 py-3 text-sm font-bold text-red-700 sm:col-span-2">
             {error}

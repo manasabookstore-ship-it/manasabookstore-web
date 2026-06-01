@@ -1,8 +1,19 @@
 import Link from "next/link";
-import { ArrowRight, BadgePercent, CalendarDays, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  BadgePercent,
+  BookOpen,
+  CalendarDays,
+  Gift,
+  PackageCheck,
+  Sparkles,
+} from "lucide-react";
 
 import { CouponCard } from "@/components/site/CouponCard";
+import { CouponStrip } from "@/components/site/CouponStrip";
+import { DealCard } from "@/components/site/DealCard";
 import { OfferCard } from "@/components/site/OfferCard";
+import { RetailPageHeader } from "@/components/site/RetailPageHeader";
 import {
   coupons,
   festivalOffers,
@@ -15,50 +26,98 @@ export default function OffersPage() {
   const hasSchoolOffers = schoolReopeningOffers.length > 0;
   const hasSeasonalOffers = seasonalOffers.length > 0;
   const hasFestivalOffers = festivalOffers.length > 0;
+  const dealCards = [
+    {
+      eyebrow: "Back To School",
+      title: "School lists and stationery combos",
+      description: "Notebook packs, covers, labels, pens and school basics.",
+      href: "/request?category=school-essentials",
+      cta: "Request school list",
+      tone: "navy" as const,
+      icon: BookOpen,
+    },
+    {
+      eyebrow: "Project Week",
+      title: "Project materials in one shelf",
+      description: "Charts, boards, glue, cutters and model supplies.",
+      href: "/category/project-materials",
+      cta: "Browse project deals",
+      tone: "green" as const,
+      icon: PackageCheck,
+    },
+    {
+      eyebrow: "Festival Picks",
+      title: "Gift wrap, cards and chocolates",
+      description: "Simple gifting choices customers can request or pick up.",
+      href: "/category/gifts-chocolates",
+      cta: "Shop gifting",
+      tone: "gold" as const,
+      icon: Gift,
+    },
+  ];
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
-      <section className="overflow-hidden rounded-[8px] bg-[#071f33] text-white">
-        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:p-10">
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <RetailPageHeader
+        eyebrow="Offers"
+        title="Store combos, coupons and seasonal picks."
+        description="Value-focused shelves for school reopening, projects, gifting and everyday buying. Customers can reference these while requesting or visiting."
+        icon={<BadgePercent className="h-6 w-6" />}
+        actions={
+          <Link
+            href="/request"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-[8px] bg-[#ffd493] px-5 text-sm font-black text-[#071f33]"
+          >
+            Request a combo
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        }
+      >
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { icon: CalendarDays, label: "Seasonal" },
+            { icon: Sparkles, label: "School" },
+            { icon: BadgePercent, label: "Festival" },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.label} className="rounded-[8px] bg-white p-4 shadow-sm">
+                <Icon className="h-6 w-6 text-[#0b6b4a]" />
+                <p className="mt-4 text-sm font-black">{item.label}</p>
+              </div>
+            );
+          })}
+        </div>
+      </RetailPageHeader>
+
+      <section className="mt-8">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <BadgePercent className="h-10 w-10 text-[#ffd493]" />
-            <p className="mt-5 text-sm font-black text-[#ffd493]">Offers</p>
-            <h1 className="mt-2 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-              Useful store promotions for student life.
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-white/72">
-              Browse dummy customer-facing offers, coupons, school reopening
-              promotions and festival picks. These are ready for future offer
-              management, without adding admin today.
+            <p className="text-sm font-black uppercase tracking-wide text-[#d86b13]">
+              Deal Zone
             </p>
+            <h2 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
+              Featured store shelves customers can act on now.
+            </h2>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3 lg:self-end">
-            {[
-              { icon: CalendarDays, label: "Seasonal promotions" },
-              { icon: Sparkles, label: "School reopening" },
-              { icon: BadgePercent, label: "Festival offers" },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.label}
-                  className="rounded-[8px] bg-white/10 p-4 ring-1 ring-white/12"
-                >
-                  <Icon className="h-6 w-6 text-[#ffd493]" />
-                  <p className="mt-4 text-sm font-black">{item.label}</p>
-                </div>
-              );
-            })}
-          </div>
+        </div>
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          {dealCards.map((deal) => (
+            <DealCard key={deal.title} {...deal} />
+          ))}
         </div>
       </section>
 
+      <div className="mt-6">
+        <CouponStrip coupons={coupons} />
+      </div>
+
       {hasCoupons ? (
-        <section className="mt-10">
+        <section className="mt-12">
           <SectionHeading
-            eyebrow="Coupons UI"
-            title="Codes customers can reference in store."
-            description="Coupon cards are static for now and can later connect to offer rules or Supabase."
+            eyebrow="Coupon Wall"
+            title="Reference codes for store conversations."
+            description="Customers can mention these while asking for school kits, project bundles or festival picks."
           />
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {coupons.map((coupon) => (

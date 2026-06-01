@@ -61,8 +61,47 @@ export async function createProductInSupabase(
       stock: product.stock,
       price: product.price,
       low_stock: product.lowStock,
+      image_url: product.imageUrl || null,
       is_active: true,
     })
+    .select("*, categories(name)")
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return mapProduct(data);
+}
+
+export async function updateProductInSupabase(
+  product: AdminProduct,
+) {
+  const supabase = createSupabaseServiceClient();
+
+  if (!supabase) {
+    return null;
+  }
+
+  const { data: category } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("name", product.category)
+    .maybeSingle();
+
+  const { data, error } = await supabase
+    .from("products")
+    .update({
+      category_id: category?.id ?? null,
+      name: product.name,
+      sku: product.sku,
+      barcode: product.barcode || null,
+      stock: product.stock,
+      price: product.price,
+      low_stock: product.lowStock,
+      image_url: product.imageUrl || null,
+    })
+    .eq("id", product.id)
     .select("*, categories(name)")
     .single();
 

@@ -1,7 +1,9 @@
-import { ClipboardList, MessageCircle } from "lucide-react";
+import { ClipboardList, MessageCircle, PackageSearch } from "lucide-react";
 
+import { RetailPageHeader } from "@/components/site/RetailPageHeader";
 import { RequestForm } from "@/components/site/RequestForm";
 import { RequestedItemsBoard } from "@/components/site/RequestedItemsBoard";
+import { RequestStatusLookup } from "@/components/site/RequestStatusLookup";
 import { getPublicRequestedItemsFromSupabase } from "@/lib/supabase/public-requests";
 import { categories, site } from "@/lib/site-data";
 
@@ -21,20 +23,27 @@ export default async function RequestPage({ searchParams }: RequestPageProps) {
     : "";
 
   return (
-    <main className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.78fr_1fr] lg:px-10 lg:py-14">
-      <section>
-        <div className="grid h-14 w-14 place-items-center rounded-[8px] bg-[#eaf4ef] text-[#0b6b4a]">
-          <ClipboardList className="h-8 w-8" />
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <RetailPageHeader
+        eyebrow="Request Desk"
+        title="Ask for a product, book list or full school kit."
+        description="Send the item details once. The request is saved for the admin team and a WhatsApp-ready message is prepared for faster follow-up."
+        icon={<ClipboardList className="h-6 w-6" />}
+      >
+        <div className="grid gap-3 sm:grid-cols-2">
+          {["Book lists", "Daily essentials", "Project kits", "Gifts"].map(
+            (item) => (
+              <div key={item} className="rounded-[8px] bg-white p-4 shadow-sm">
+                <PackageSearch className="h-5 w-5 text-[#0b6b4a]" />
+                <p className="mt-3 text-sm font-black text-[#071f33]">{item}</p>
+              </div>
+            ),
+          )}
         </div>
-        <p className="mt-6 text-sm font-black text-[#d86b13]">Request Item</p>
-        <h1 className="mt-2 text-4xl font-black leading-tight sm:text-5xl">
-          Ask for a book, product or full list.
-        </h1>
-        <p className="mt-4 text-base leading-7 text-[#071f33]/68">
-          Share the item you need and the store team can review availability.
-          Requests are saved for the admin team, and a formatted WhatsApp
-          message is prepared for faster follow-up.
-        </p>
+      </RetailPageHeader>
+
+      <div className="mt-8 grid gap-8 lg:grid-cols-[0.78fr_1fr]">
+      <section>
         <div className="mt-6 rounded-[8px] border border-[#071f33]/10 bg-white p-5 shadow-sm">
           <p className="text-sm font-black text-[#071f33]">
             Need faster help today?
@@ -51,6 +60,7 @@ export default async function RequestPage({ searchParams }: RequestPageProps) {
             Continue on WhatsApp
           </a>
         </div>
+        <RequestStatusLookup />
         <RequestedItemsBoard items={requestedItems} />
       </section>
 
@@ -59,6 +69,7 @@ export default async function RequestPage({ searchParams }: RequestPageProps) {
         initialItem={params.item ?? ""}
         initialCategory={requestedCategory}
       />
+      </div>
     </main>
   );
 }

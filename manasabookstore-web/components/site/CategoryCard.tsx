@@ -10,8 +10,10 @@ export function CategoryCard({ category }: { category: Category }) {
   return (
     <Link
       href={`/category/${category.slug}`}
-      className="group block rounded-[8px] border border-[#071f33]/10 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#0b6b4a]/35 hover:shadow-xl"
+      className="group block overflow-hidden rounded-[8px] border border-[#071f33]/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-[#0b6b4a]/35 hover:shadow-xl"
     >
+      <div className="h-1.5 bg-[#071f33]" />
+      <div className="p-5">
       <div
         className={`flex h-12 w-12 items-center justify-center rounded-[8px] ${category.accent}`}
       >
@@ -27,6 +29,7 @@ export function CategoryCard({ category }: { category: Category }) {
           </p>
         </div>
         <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-[#071f33]/35 transition group-hover:translate-x-1 group-hover:text-[#0b6b4a]" />
+      </div>
       </div>
     </Link>
   );

@@ -21,6 +21,7 @@ import {
   createAdminProduct,
   createAdminSale,
   fetchAdminSnapshot,
+  updateAdminProduct,
 } from "@/lib/admin-api";
 
 type CartItem = SaleItem;
@@ -30,6 +31,7 @@ type AdminStoreValue = {
   sales: AdminSale[];
   dataSource: "supabase" | "local";
   addProduct: (product: Omit<AdminProduct, "id">) => Promise<void>;
+  updateProduct: (product: AdminProduct) => Promise<void>;
   recordSale: (
     items: CartItem[],
     paymentMode: AdminSale["paymentMode"],
@@ -110,6 +112,19 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
     }
   }, []);
 
+  const updateProduct = useCallback(async (product: AdminProduct) => {
+    const updated = await updateAdminProduct(product);
+    const nextProduct = updated ?? product;
+
+    setProducts((current) =>
+      current.map((item) => (item.id === product.id ? nextProduct : item)),
+    );
+
+    if (updated) {
+      setDataSource("supabase");
+    }
+  }, []);
+
   const recordSale = useCallback(
     async (items: CartItem[], paymentMode: AdminSale["paymentMode"]) => {
       const subtotal = items.reduce(
@@ -161,10 +176,11 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
       sales,
       dataSource,
       addProduct,
+      updateProduct,
       recordSale,
       resetDemoData,
     }),
-    [addProduct, dataSource, products, recordSale, resetDemoData, sales],
+    [addProduct, dataSource, products, recordSale, resetDemoData, sales, updateProduct],
   );
 
   return (

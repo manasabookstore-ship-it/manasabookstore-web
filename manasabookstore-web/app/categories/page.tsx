@@ -1,20 +1,42 @@
+import Link from "next/link";
+import { ArrowRight, Grid3X3 } from "lucide-react";
+
 import { CategoryCard } from "@/components/site/CategoryCard";
+import { RetailPageHeader } from "@/components/site/RetailPageHeader";
 import { categories } from "@/lib/site-data";
 
 export default function CategoriesPage() {
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
-      <div className="max-w-3xl">
-        <p className="text-sm font-black text-[#d86b13]">Categories</p>
-        <h1 className="mt-2 text-4xl font-black leading-tight sm:text-5xl">
-          Find what you need faster.
-        </h1>
-        <p className="mt-4 text-base leading-7 text-[#071f33]/68">
-          Browse the core Manasa Book Center departments used by students,
-          parents, hostellers and project makers.
-        </p>
-      </div>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <RetailPageHeader
+        eyebrow="Store Departments"
+        title="Shop by shelf, not by guesswork."
+        description="Quickly jump into the departments customers ask for most: books, stationery, school items, project materials, tools, hostel essentials and gifting."
+        icon={<Grid3X3 className="h-6 w-6" />}
+        actions={
+          <Link
+            href="/products"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-[8px] bg-[#ffd493] px-5 text-sm font-black text-[#071f33]"
+          >
+            Browse all products
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        }
+      >
+        <div className="grid gap-3 sm:grid-cols-3">
+          {categories.slice(0, 6).map((category) => (
+            <Link
+              key={category.slug}
+              href={`/category/${category.slug}`}
+              className="rounded-[8px] bg-white p-4 text-sm font-black text-[#071f33] shadow-sm"
+            >
+              {category.name}
+            </Link>
+          ))}
+        </div>
+      </RetailPageHeader>
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {categories.map((category) => (
           <CategoryCard key={category.slug} category={category} />
         ))}

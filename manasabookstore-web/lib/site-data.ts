@@ -29,6 +29,7 @@ export type Product = {
   featured?: boolean;
   offer?: string;
   stockNote: string;
+  imageUrl?: string;
 };
 
 export type OfferType = "seasonal" | "school" | "festival" | "combo";

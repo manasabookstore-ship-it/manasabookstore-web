@@ -43,6 +43,22 @@ export async function createAdminProduct(
   return (await response.json()) as AdminProduct;
 }
 
+export async function updateAdminProduct(
+  product: AdminProduct,
+): Promise<AdminProduct | null> {
+  const response = await fetch("/api/admin/products", {
+    method: "PATCH",
+    headers: headers(),
+    body: JSON.stringify(product),
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return (await response.json()) as AdminProduct;
+}
+
 export async function createAdminSale(
   items: SaleItem[],
   paymentMode: AdminSale["paymentMode"],

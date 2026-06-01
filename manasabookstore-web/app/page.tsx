@@ -1,278 +1,115 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  BadgePercent,
-  BookMarked,
-  CheckCircle2,
-  MapPin,
-  MousePointerClick,
-  PackageCheck,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  Store,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
-import { CategoryCard } from "@/components/site/CategoryCard";
+import { CollectionPanel } from "@/components/site/CollectionPanel";
+import { EditorialProductCard } from "@/components/site/EditorialProductCard";
 import { Hero } from "@/components/site/Hero";
-import { ProductCard } from "@/components/site/ProductCard";
-import { StoreMap } from "@/components/site/StoreMap";
-import {
-  categories,
-  featuredProducts,
-  offerProducts,
-  site,
-} from "@/lib/site-data";
+import { LuxuryCategoryStrip } from "@/components/site/LuxuryCategoryStrip";
+import { LuxuryOfferBand } from "@/components/site/LuxuryOfferBand";
+import { LuxuryTrustBand } from "@/components/site/LuxuryTrustBand";
+import { featuredProducts } from "@/lib/site-data";
+import { getCommerceSettingsFromSupabase } from "@/lib/supabase/commerce-data";
+import { getPublicProductsFromSupabase } from "@/lib/supabase/public-products";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+const collections = [
+  {
+    title: "Back to School",
+    text: "Everything you need for a graceful academic start.",
+    href: "/category/school-essentials",
+    image: "/generated/collection-school.png",
+    tone: "school" as const,
+  },
+  {
+    title: "Project Ready",
+    text: "Tools and materials for every idea and occasion.",
+    href: "/category/project-materials",
+    image: "/generated/collection-project.png",
+    tone: "project" as const,
+  },
+  {
+    title: "Gift Picks",
+    text: "Thoughtful gifts for every occasion.",
+    href: "/category/gifts-chocolates",
+    image: "/generated/collection-gift.png",
+    tone: "gift" as const,
+  },
+  {
+    title: "Everyday Essentials",
+    text: "Quality daily essentials for home and you.",
+    href: "/category/daily-essentials",
+    image: "/generated/collection-daily.png",
+    tone: "daily" as const,
+  },
+];
+
+export default async function HomePage() {
+  const [liveProducts, settings] = await Promise.all([
+    getPublicProductsFromSupabase(8),
+    getCommerceSettingsFromSupabase(),
+  ]);
+  const productShelf = [...liveProducts, ...featuredProducts]
+    .filter(
+      (product, index, all) =>
+        all.findIndex((item) => item.slug === product.slug) === index,
+    )
+    .slice(0, 4);
+
   return (
-    <main>
+    <main className="bg-[#fbf7ef]">
       <Hero />
 
-      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-22">
-        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <div>
-            <p className="text-sm font-black text-[#d86b13]">
-              Featured Categories
-            </p>
-            <h2 className="mt-2 max-w-2xl text-3xl font-black leading-tight sm:text-5xl">
-              Everything arranged around real store needs.
-            </h2>
-          </div>
+      {settings.homepageNoticeEnabled && settings.homepageNotice ? (
+        <section className="bg-[#fff3da] px-4 py-3 text-center text-sm font-black text-[#7c3d00]">
+          {settings.homepageNotice}
+        </section>
+      ) : null}
+
+      <LuxuryCategoryStrip />
+
+      <section className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <h2 className="font-serif text-xl font-semibold uppercase tracking-[0.14em] text-[#071f33] sm:text-2xl sm:tracking-[0.2em]">
+            Curated Collections
+          </h2>
           <Link
             href="/categories"
-            className="inline-flex h-12 items-center gap-2 rounded-[8px] bg-[#071f33] px-5 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#0b6b4a]"
+            className="hidden items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#8a5a12] sm:inline-flex"
           >
-            Browse all
+            View all collections
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.slice(0, 6).map((category) => (
-            <CategoryCard key={category.slug} category={category} />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {collections.map((collection) => (
+            <CollectionPanel key={collection.title} {...collection} />
           ))}
         </div>
       </section>
 
-      <section className="bg-white py-16 lg:py-22">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-            <div>
-              <p className="text-sm font-black text-[#0b6b4a]">
-                Store Highlights
-              </p>
-              <h2 className="mt-2 text-3xl font-black leading-tight sm:text-5xl">
-                A trusted local store experience with clearer product discovery.
-              </h2>
-              <p className="mt-4 text-base leading-8 text-[#071f33]/68">
-                Manasa is positioned for students, parents, hostellers and
-                project makers who need practical items quickly and clearly.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {[
-                {
-                  icon: BookMarked,
-                  title: "Student-first selection",
-                  text: "Books, guides, notebooks, records, charts and tools grouped by use.",
-                },
-                {
-                  icon: Store,
-                  title: "Trusted local presence",
-                  text: "A familiar Chimakurthy store with a more polished online front.",
-                },
-                {
-                  icon: ShieldCheck,
-                  title: "Clear product discovery",
-                  text: "Categories and product pages help customers browse before visiting.",
-                },
-                {
-                  icon: MousePointerClick,
-                  title: "Easy item requests",
-                  text: "Customers can request books, supplies and project materials directly from the website.",
-                },
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <article
-                    key={item.title}
-                    className="rounded-[8px] border border-[#071f33]/10 bg-[#fbf7ef] p-5 transition hover:-translate-y-0.5 hover:shadow-xl"
-                  >
-                    <Icon className="h-7 w-7 text-[#0b6b4a]" />
-                    <h3 className="mt-5 text-lg font-black">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[#071f33]/64">
-                      {item.text}
-                    </p>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-22">
-        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <div>
-            <p className="text-sm font-black text-[#d86b13]">
-              Featured Products
-            </p>
-            <h2 className="mt-2 max-w-2xl text-3xl font-black leading-tight sm:text-5xl">
-              A polished catalog for quick product discovery.
-            </h2>
-          </div>
+      <section className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <h2 className="font-serif text-xl font-semibold uppercase tracking-[0.14em] text-[#071f33] sm:text-2xl sm:tracking-[0.2em]">
+            Featured Products
+          </h2>
           <Link
             href="/products"
-            className="inline-flex h-12 items-center gap-2 rounded-[8px] border border-[#071f33]/12 bg-white px-5 text-sm font-black text-[#071f33] transition hover:-translate-y-0.5 hover:border-[#0b6b4a]/35"
+            className="hidden items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#8a5a12] sm:inline-flex"
           >
-            View products
+            View all products
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="mt-9 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {featuredProducts.slice(0, 4).map((product) => (
-            <ProductCard key={product.slug} product={product} />
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {productShelf.map((product) => (
+            <EditorialProductCard key={product.slug} product={product} />
           ))}
         </div>
       </section>
 
-      <section className="bg-[#071f33] py-16 text-white lg:py-22">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:px-10">
-          <div>
-            <BadgePercent className="h-9 w-9 text-[#ffd493]" />
-            <p className="mt-5 text-sm font-black text-[#ffd493]">Offers</p>
-            <h2 className="mt-2 text-3xl font-black leading-tight sm:text-5xl">
-              Useful combos and seasonal picks.
-            </h2>
-            <p className="mt-4 text-base leading-8 text-white/68">
-              Seasonal product picks and useful bundles help customers plan
-              school, project and gifting purchases.
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {offerProducts.slice(0, 2).map((product) => (
-              <ProductCard key={product.slug} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-22">
-        <div className="grid overflow-hidden rounded-[8px] bg-[#f5ead7] lg:grid-cols-[1fr_0.86fr]">
-          <div className="p-6 sm:p-8 lg:p-10">
-            <PackageCheck className="h-9 w-9 text-[#0b6b4a]" />
-            <p className="mt-5 text-sm font-black text-[#d86b13]">
-              Request Item CTA
-            </p>
-            <h2 className="mt-2 max-w-2xl text-3xl font-black leading-tight sm:text-5xl">
-              Looking for a specific book or item?
-            </h2>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-[#071f33]/68">
-              Customers can share book names, school lists, project materials or
-              product requirements so the store team can review availability.
-            </p>
-            <Link
-              href="/request"
-              className="mt-7 inline-flex h-12 items-center gap-2 rounded-[8px] bg-[#0b6b4a] px-5 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#09563c]"
-            >
-              Request an item
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <div className="grid content-center gap-3 bg-[#0b6b4a] p-6 text-white sm:p-8 lg:p-10">
-            {[
-              "Book lists",
-              "Project materials",
-              "Engineering tools",
-              "School essentials",
-            ].map((item) => (
-              <div
-                key={item}
-                className="flex items-center gap-3 rounded-[8px] bg-white/12 p-4"
-              >
-                <CheckCircle2 className="h-5 w-5 text-[#ffd493]" />
-                <span className="text-sm font-black">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white py-16 lg:py-22">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:px-10">
-          <div>
-            <p className="text-sm font-black text-[#d86b13]">Location</p>
-            <h2 className="mt-2 text-3xl font-black leading-tight sm:text-5xl">
-              Visit Manasa Book Center in Chimakurthy.
-            </h2>
-            <p className="mt-4 text-base leading-8 text-[#071f33]/68">
-              Find the store on Kurnool Main Road and use the website to
-              understand categories, product types and store contact options.
-            </p>
-            <a
-              href={site.directions}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-7 inline-flex h-12 items-center gap-2 rounded-[8px] bg-[#071f33] px-5 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#0b6b4a]"
-            >
-              <MapPin className="h-4 w-4" />
-              Get directions
-            </a>
-          </div>
-          <StoreMap />
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-22">
-        <div className="rounded-[8px] bg-[#071f33] p-6 text-white sm:p-8 lg:p-10">
-          <p className="text-sm font-black text-[#ffd493]">
-            Digital Storefront
-          </p>
-          <div className="mt-4 grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <h2 className="text-3xl font-black leading-tight sm:text-5xl">
-              A practical online front for a real local store.
-            </h2>
-            <p className="text-base leading-8 text-white/68">
-              Manasa Book Center customers can browse categories, discover
-              product types, request items and get directions from one reliable
-              place.
-            </p>
-          </div>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {[
-              {
-                icon: Search,
-                title: "Searchable catalog",
-                text: "A faster way to explore product types before visiting.",
-              },
-              {
-                icon: MousePointerClick,
-                title: "Request items online",
-                text: "Send book lists, school requirements and product requests from the website.",
-              },
-              {
-                icon: Sparkles,
-                title: "Modern local commerce",
-                text: "A clean customer experience for a trusted Chimakurthy store.",
-              },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <article
-                  key={item.title}
-                  className="rounded-[8px] border border-white/12 bg-white/10 p-5"
-                >
-                  <Icon className="h-7 w-7 text-[#ffd493]" />
-                  <h3 className="mt-5 text-lg font-black">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-white/64">
-                    {item.text}
-                  </p>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      <LuxuryOfferBand />
+      <LuxuryTrustBand />
     </main>
   );
 }

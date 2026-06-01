@@ -15,13 +15,15 @@ export async function getCommerceSettingsFromSupabase(): Promise<CommerceSetting
       onlineUpiPaymentEnabled: false,
       payAtStoreEnabled: true,
       pickupPaymentEnabled: true,
+      homepageNotice: "",
+      homepageNoticeEnabled: false,
     };
   }
 
   const { data } = await supabase
     .from("store_settings")
     .select(
-      "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled",
+      "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled, homepage_notice, homepage_notice_enabled",
     )
     .order("created_at", { ascending: true })
     .limit(1)
@@ -36,6 +38,8 @@ export async function getCommerceSettingsFromSupabase(): Promise<CommerceSetting
     onlineUpiPaymentEnabled: data?.online_upi_payment_enabled ?? false,
     payAtStoreEnabled: data?.pay_at_store_enabled ?? true,
     pickupPaymentEnabled: data?.pickup_payment_enabled ?? true,
+    homepageNotice: data?.homepage_notice ?? "",
+    homepageNoticeEnabled: data?.homepage_notice_enabled ?? false,
   };
 }
 
@@ -66,6 +70,8 @@ export async function updateCommerceSettingsInSupabase(
     online_upi_payment_enabled: settings.onlineUpiPaymentEnabled,
     pay_at_store_enabled: settings.payAtStoreEnabled,
     pickup_payment_enabled: settings.pickupPaymentEnabled,
+    homepage_notice: settings.homepageNotice.trim() || null,
+    homepage_notice_enabled: settings.homepageNoticeEnabled,
   };
 
   const query = current
@@ -74,14 +80,14 @@ export async function updateCommerceSettingsInSupabase(
         .update(payload)
         .eq("id", current.id)
         .select(
-          "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled",
+          "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled, homepage_notice, homepage_notice_enabled",
         )
         .single()
     : supabase
         .from("store_settings")
         .insert(payload)
         .select(
-          "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled",
+          "online_ordering_enabled, pickup_enabled, delivery_enabled, phonepe_upi_id, phonepe_merchant_name, online_upi_payment_enabled, pay_at_store_enabled, pickup_payment_enabled, homepage_notice, homepage_notice_enabled",
         )
         .single();
 
@@ -100,6 +106,8 @@ export async function updateCommerceSettingsInSupabase(
     onlineUpiPaymentEnabled: data.online_upi_payment_enabled,
     payAtStoreEnabled: data.pay_at_store_enabled,
     pickupPaymentEnabled: data.pickup_payment_enabled,
+    homepageNotice: data.homepage_notice ?? "",
+    homepageNoticeEnabled: data.homepage_notice_enabled,
   };
 }
 

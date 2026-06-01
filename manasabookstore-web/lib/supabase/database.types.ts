@@ -140,6 +140,7 @@ export type Database = {
           is_featured: boolean;
           is_active: boolean;
           metadata: Json;
+          image_url: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -157,6 +158,7 @@ export type Database = {
           is_featured?: boolean;
           is_active?: boolean;
           metadata?: Json;
+          image_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -253,6 +255,8 @@ export type Database = {
           online_upi_payment_enabled: boolean;
           pay_at_store_enabled: boolean;
           pickup_payment_enabled: boolean;
+          homepage_notice: string | null;
+          homepage_notice_enabled: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -271,6 +275,8 @@ export type Database = {
           online_upi_payment_enabled?: boolean;
           pay_at_store_enabled?: boolean;
           pickup_payment_enabled?: boolean;
+          homepage_notice?: string | null;
+          homepage_notice_enabled?: boolean;
           created_at?: string;
           updated_at?: string;
         };

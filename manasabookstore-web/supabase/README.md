@@ -82,7 +82,7 @@ Without these variables, the request still saves to Supabase and the customer st
 Checkout is structured for PhonePe / UPI, pay at store, and pay during pickup.
 No live payment is processed yet. Before enabling these controls in production,
 run `supabase/payment-settings.sql` once so `store_settings` has the PhonePe
-and payment toggle fields.
+payment toggle fields, and homepage notice fields.
 
 Future PhonePe Payment Gateway work should replace the current UPI intent helper
 with official merchant order creation, callback handling, and server-side payment
@@ -100,3 +100,10 @@ new, it tries free public sources in this order:
 
 External lookups only create a draft suggestion. Owners should confirm product
 name, category, price, stock, and low-stock threshold before saving.
+
+## Product Images
+
+Products support an optional `image_url` field. Run
+`supabase/product-images.sql` once on existing databases before editing product
+photos in admin. Admins can paste an image URL or upload a small product photo
+that is stored with the product record.

@@ -1,21 +1,25 @@
 import { MapPin, MessageCircle, Phone } from "lucide-react";
 
+import { RetailPageHeader } from "@/components/site/RetailPageHeader";
 import { StoreMap } from "@/components/site/StoreMap";
 import { site } from "@/lib/site-data";
 
 export default function ContactPage() {
   return (
-    <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
-      <div className="max-w-3xl">
-        <p className="text-sm font-black text-[#d86b13]">Contact</p>
-        <h1 className="mt-2 text-4xl font-black leading-tight sm:text-5xl">
-          Visit, call or message Manasa.
-        </h1>
-        <p className="mt-4 text-base leading-7 text-[#071f33]/68">
-          Reach the store for book lists, product availability, pickup help and
-          directions.
-        </p>
-      </div>
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <RetailPageHeader
+        eyebrow="Contact"
+        title="Visit, call or message Manasa."
+        description="Reach the store for book lists, product availability, pickup help and directions."
+        icon={<Phone className="h-6 w-6" />}
+      >
+        <div className="rounded-[8px] bg-white p-5 shadow-sm">
+          <p className="text-sm font-black text-[#071f33]">{site.address}</p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-[#071f33]/62">
+            Send a clear list before visiting for quicker help at the counter.
+          </p>
+        </div>
+      </RetailPageHeader>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         <a
           href={site.phoneHref}

@@ -129,11 +129,11 @@ export function CheckoutView() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
-      <div>
-        <p className="text-sm font-black text-[#d86b13]">Checkout</p>
+    <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <div className="rounded-[8px] bg-[#071f33] p-6 text-white shadow-sm sm:p-8">
+        <p className="text-sm font-black text-[#ffd493]">Checkout</p>
         <h1 className="mt-2 text-4xl font-black">Pickup or delivery order</h1>
-        <p className="mt-3 text-sm font-semibold text-[#071f33]/62">
+        <p className="mt-3 text-sm font-semibold text-white/68">
           Checkout and payment choices follow admin store settings.
         </p>
       </div>

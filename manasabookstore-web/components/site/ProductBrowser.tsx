@@ -106,7 +106,7 @@ export function ProductBrowser({
 
   return (
     <section>
-      <div className="rounded-[8px] border border-[#071f33]/10 bg-white p-4 shadow-sm">
+      <div className="sticky top-[76px] z-20 rounded-[8px] border border-[#071f33]/10 bg-white/95 p-4 shadow-xl backdrop-blur">
         <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
           <label className="relative block">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#071f33]/45" />
@@ -172,7 +172,7 @@ export function ProductBrowser({
         </div>
       ) : null}
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {visibleProducts.map((product) => (
           <ProductCard key={product.slug} product={product} />
         ))}
@@ -214,7 +214,7 @@ export function ProductBrowser({
           ) : null}
 
           {!isLookupLoading && visibleLookupResults.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {visibleLookupResults.map((suggestion) => (
                 <ProductLookupCard
                   key={`${suggestion.source}-${suggestion.id}`}
